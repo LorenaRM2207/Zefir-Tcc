@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import AntDesign from '@expo/vector-icons/AntDesign'
+import Feather from '@expo/vector-icons/Feather'
 
 
 
@@ -23,6 +24,25 @@ export default function TelaBuy() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Adquirir sensor</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.container}>
         <View style={styles.boxGeral}>
           <Image
@@ -34,11 +54,11 @@ export default function TelaBuy() {
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingRight: 70, marginBottom: 15 }}>
             <View style={styles.bottomAdd}>
               <TouchableOpacity>
-                <AntDesign name="minus-circle" size={15} color="blue" />
+                <AntDesign name="minus-circle" size={15} color="#A4B5C4" />
               </TouchableOpacity>
               <Text style={styles.textNegrito}>2</Text>
               <TouchableOpacity>
-                <AntDesign name="minus-circle" size={15} color="blue" />
+              <Feather name="plus-circle" size={18} color="#A4B5C4" />
               </TouchableOpacity>
             </View>
             <Text style={styles.textNegrito}>Frete: ---</Text>
@@ -74,6 +94,28 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
+  //Cabeçalho
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 1,
+    lineHeight: 30,
+    color: '#0F0F0F',
+    marginHorizontal: 60, 
+    textAlign:'center'
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
+  },
   image: {
     width: 200,
     height: 200,
@@ -86,7 +128,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     alignItems: 'center',
     justifyContent: 'center', 
-    marginTop: 130
+    margin: 10
   },
   boxGeral2: {
     backgroundColor: 'rgb(164, 181, 196)',

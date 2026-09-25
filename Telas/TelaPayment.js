@@ -28,8 +28,27 @@ export default function TelaBuy() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Adquirir sensor</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      <View style={{ flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10, marginLeft: 30, width: '50%', justifyContent: 'space-around' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 30, width: '50%', justifyContent: 'space-around' }}>
         <SimpleLineIcons name="handbag" size={30} color="black" />
         <Text style={styles.textTitle}>Produtos (2)</Text>
       </View>
@@ -79,7 +98,7 @@ export default function TelaBuy() {
               <Text style={styles.textInformation2}>Visa  **** 1234</Text>
             </View>
             {/* Icone2 */}
-            <View style={{ paddingRight: 20, paddingLeft: 60 }}>
+            <View style={{ paddingRight: 20, paddingLeft: 40 }}>
               <Feather name="circle" size={24} color="#6C7072" />
             </View>
           </View>
@@ -99,7 +118,7 @@ export default function TelaBuy() {
               <Text style={styles.textInformation2}>Mastercard  **** 4321</Text>
             </View>
             {/* Icone2 */}
-            <View style={{ paddingRight: 20, paddingLeft: 50 }}>
+            <View style={{ paddingRight: 20, paddingLeft: 30 }}>
               <AntDesign name="check-circle" size={24} color="#6C7072" />
             </View>
           </View>
@@ -162,6 +181,29 @@ const styles = StyleSheet.create({
   //alinhamento
   container: {
     alignItems: 'center',
+  },
+  //Cabeçalho
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10, 
+    margin: 10
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 2,
+    lineHeight: 30,
+    color: '#0F0F0F',
+    marginHorizontal: 60, 
+    textAlign: 'center'
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
   },
   image: {
     width: 100,

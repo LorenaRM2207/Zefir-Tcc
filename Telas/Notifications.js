@@ -109,6 +109,7 @@ const styles = StyleSheet.create({
     width: '90%',
     justifyContent: 'center',
     marginTop: 50, 
+    marginHorizontal:10,
     paddingHorizontal: 10
   },
   textHeader: {
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     lineHeight: 20,
     color: '#0F0F0F',
-    marginHorizontal: 60
+    marginHorizontal: 50
   },
   imageHeader: {
     width: 50,

@@ -5,6 +5,7 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons'
+import Feather from '@expo/vector-icons/Feather'
 
 
 
@@ -24,9 +25,28 @@ export default function TelaBuy() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Sensor adquirido</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.container}>
         <View style={styles.Card}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', width: '80%', justifyContent: 'space-around', marginTop: 30 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', width: '80%', justifyContent: 'space-around', textAlign:'center', margin:10}}>
             <SimpleLineIcons name="handbag" size={30} color="black" />
             <Text style={styles.textTitle}>Compra finalizada</Text>
           
@@ -85,10 +105,33 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
+  //Cabeçalho
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10, 
+    margin: 10
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 2,
+    lineHeight: 30,
+    color: '#0F0F0F',
+    marginHorizontal: 60, 
+    textAlign: 'center'
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
+  },
   image: {
-    width: 100,
-    height: 100,
-    marginHorizontal: 20
+    width: 90,
+    height: 90,
+    margin: 5
   },
   Card: {
     backgroundColor: 'rgba(164, 181, 196, 0.2)',
@@ -97,7 +140,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     margin: 10,
     alignItems: 'center',
-    marginTop: 150
   },
   textTitle: {
     fontFamily: 'ManropeBold',
@@ -123,12 +165,13 @@ const styles = StyleSheet.create({
   },
   boxProduct: {
     backgroundColor: 'rgba(164, 181, 196, 0.3)',
-    width: '90%',
+    width: '95%',
     height: 120,
     borderRadius: 20,
     margin: 10,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center', 
+    
   },
   columnsRow: {
     flexDirection: 'row',
@@ -138,12 +181,12 @@ const styles = StyleSheet.create({
   },
   bottomAdd: {
     backgroundColor: 'white',
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 20
+    margin: 10
   },
   boxProduct2: {
     backgroundColor: 'rgba(164, 181, 196, 0.31)',

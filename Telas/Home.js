@@ -37,6 +37,25 @@ export default function Home() {
     <View style={styles.screen}>
       {modoAtivo ? (
         <>
+        {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Home</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
           <View style={styles.logoContainer}>
             <View style={styles.logoBox}>
               <Image
@@ -105,7 +124,25 @@ export default function Home() {
         </>
       ) : (
         <>
-
+          {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Home</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
           <View style={styles.container2}>
             <Image
                 source={require('../assets/presentation3.png')}
@@ -118,10 +155,6 @@ export default function Home() {
                   <Text style={styles.textRooms}> Verificar ambientes</Text>
                 </TouchableOpacity>
               </View>
-            
-
-
-
           </View>
           {/* Bottom compra sensor */}
           <View style={styles.container}>
@@ -226,6 +259,28 @@ export default function Home() {
 
 const styles = StyleSheet.create({
 
+   //Cabeçalho
+   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 1,
+    lineHeight: 20,
+    color: '#0F0F0F',
+    marginHorizontal: 90
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
+  },
+  
   //Sensor desconctado
   logoBox: {
     alignItems: 'center',
@@ -238,7 +293,7 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 100,
+    margin: 10,
     marginBottom: 90
   },
   configurationContainer: {
@@ -345,7 +400,7 @@ const styles = StyleSheet.create({
   },
   container2: {
     alignItems: 'center',
-    marginTop: 100, 
+    margin: 10, 
     position: 'relative',
   },
   //Ambientes

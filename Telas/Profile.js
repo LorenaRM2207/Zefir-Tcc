@@ -37,7 +37,7 @@ export default function Home() {
           >
           <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
-          <Text style={styles.textHeader}>Notificação</Text>
+          <Text style={styles.textHeader}>Perfil</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaConfiguration')}
           >
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     lineHeight: 20,
     color: '#0F0F0F',
-    marginHorizontal: 60
+    marginHorizontal: 90
   },
   imageHeader: {
     width: 50,
