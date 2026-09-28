@@ -4,13 +4,10 @@ import { useNavigation } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
-import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
-import EvilIcons from '@expo/vector-icons/EvilIcons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
-import Ionicons from '@expo/vector-icons/Ionicons'
+import AntDesign from '@expo/vector-icons/AntDesign'
+
 
 
 
@@ -29,8 +26,14 @@ export default function TelaSuporte() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      <TouchableOpacity 
+          style={{ marginTop: 50, marginBottom: 10, marginHorizontal: 20}}
+          onPress={() => navigation.navigate('Principal')}
+        >
+          <AntDesign name="arrow-left" size={30} color="black" />
+        </TouchableOpacity>
       <View style={styles.container}>
-        <View style={{marginTop:100}}>
+        <View>
         <Text style={styles.textTitle}>Há algo a relatar ou dúvidas?</Text>
         <Text style={styles.textInformation2}>Agradecemos pela compra!</Text>
       </View>
@@ -132,7 +135,7 @@ const styles = StyleSheet.create({
   Card: {
     backgroundColor: 'rgba(164, 181, 196, 0.2)',
     width: '90%',
-    height: 500,
+    height: 450,
     borderRadius: 30,
     margin: 20,
     alignItems: 'center',

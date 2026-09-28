@@ -26,6 +26,25 @@ export default function Rooms() {
   return (
     //View geral
     <View style={styles.screen}>
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Ambientes</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
       {/* Box Search*/}
       <View style={styles.container}>
         <View style={styles.boxSearch}>
@@ -91,6 +110,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  //Cabeçalho
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10,
+    marginBottom: 20
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 1,
+    lineHeight: 20,
+    color: '#0F0F0F',
+    marginHorizontal: 50
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
+  },
   //Box Search
   boxSearch: {
     backgroundColor: 'rgba(217, 217, 217, 0.44)',
@@ -99,7 +140,6 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 180,
     marginBottom: 20
   },
   textInputSearch: {

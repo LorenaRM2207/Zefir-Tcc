@@ -125,6 +125,7 @@ export default function Home() {
       ) : (
         <>
           {/* Cabeçalho*/}
+      <ScrollView>
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -250,6 +251,7 @@ export default function Home() {
               </TouchableOpacity>
             </View>
           </View>
+          </ScrollView>
         </>
       )}
     </View>

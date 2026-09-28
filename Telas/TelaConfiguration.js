@@ -7,6 +7,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import AntDesign from '@expo/vector-icons/AntDesign'
 
 
 
@@ -29,19 +30,11 @@ export default function TelaConfiguration() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('TelaSuporte')}
+            onPress={() => navigation.navigate('Principal')}
           >
-            <Feather name="message-square" size={35} color="black" />
+            <AntDesign name="arrow-left" size={30} color="black" />
           </TouchableOpacity>
-          <Text style={styles.textHeader}>Notificação</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
+          <Text style={styles.textHeader}>Configuração</Text>
         </View>
       </View>
 
@@ -99,7 +92,7 @@ export default function TelaConfiguration() {
       </View>
       <View style={styles.container}>
         <TouchableOpacity
-          style={{ flexDirection: 'row', margin: 20 }}
+          style={{ flexDirection: 'row', margin: 20, alignItems: 'center' }}
         >
           <MaterialCommunityIcons name="location-exit" size={24} color="red" />
           <Text style={styles.textInformation3}>Desconectar todos</Text>
@@ -126,7 +119,8 @@ const styles = StyleSheet.create({
     width: '90%',
     justifyContent: 'center',
     marginTop: 50,
-    paddingHorizontal: 10
+    paddingHorizontal: 10, 
+    marginBottom: 40
   },
   textHeader: {
     fontFamily: 'ManropeBold',
@@ -134,11 +128,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     lineHeight: 20,
     color: '#0F0F0F',
-    marginHorizontal: 60
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
+    marginHorizontal: 30
   },
   //Caixas de informações
   boxRooms: {
@@ -149,6 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     justifyContent: 'center',
+    
 
   },
   columnsRow: {

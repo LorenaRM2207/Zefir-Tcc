@@ -99,7 +99,7 @@ export default function Home() {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.boxRooms}
-          onPress={() => navigation.navigate('TelaConfiguration')}
+          onPress={() => navigation.navigate('Wallet')}
         >
           <View style={styles.columnsRow}>
             {/* Icone */}
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
+    alignItems: 'baseline',
   },
   container: {
     alignItems: 'center',
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 10,
-    marginTop: 120,
+    marginTop: 50
   },
   textUser: {
     fontFamily: 'ManropeBold',
