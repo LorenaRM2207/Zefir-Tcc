@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
+import Feather from '@expo/vector-icons/Feather'
 
 
 
@@ -22,6 +23,25 @@ export default function NewRoom() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+          <Feather name="message-square" size={35} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Ambientes</Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Profile')}
+          >
+          <Image
+            source={require('../assets/Avatar.png')}
+            style={styles.imageHeader}
+          />
+          </TouchableOpacity>
+        </View>
+      </View>
       <View style={styles.container}>
         <View style={styles.boxAddRoom}>
           <Text style={styles.textRooms}>Adicionar ambiente</Text>
@@ -57,7 +77,7 @@ export default function NewRoom() {
           style={styles.bottomAdd}
           onPress={() => navigation.navigate('Rooms')}
         >
-          <Text style={styles.textBottons}>Ver compars </Text>
+          <Text style={styles.textBottons}>Atribuir sensor </Text>
         </TouchableOpacity>
       </View>
 
@@ -75,6 +95,27 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
+  //Cabeçalho
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    justifyContent: 'center',
+    marginTop: 50, 
+    paddingHorizontal: 10
+  },
+  textHeader: {
+    fontFamily: 'ManropeBold',
+    fontSize: 30,
+    letterSpacing: 1,
+    lineHeight: 20,
+    color: '#0F0F0F',
+    marginHorizontal: 50
+  },
+  imageHeader: {
+    width: 50,
+    height: 50,
+  },
   boxAddRoom: {
     backgroundColor: 'rgba(217, 217, 217, 0.44)',
     width: '90%',
@@ -82,7 +123,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 150,
+    marginTop: 10,
     marginBottom: 20
   },
   textRooms: {

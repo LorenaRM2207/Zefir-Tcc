@@ -7,6 +7,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
+import AntDesign from '@expo/vector-icons/AntDesign'
 
 
 export default function Rooms2() {
@@ -26,6 +27,12 @@ export default function Rooms2() {
 
   return (
     <View style={styles.screen}>
+      <TouchableOpacity 
+          style={{ marginTop: 50, marginBottom: 10, marginHorizontal: 20}}
+          onPress={() => navigation.navigate('Rooms')}
+        >
+          <AntDesign name="arrow-left" size={30} color="black" />
+        </TouchableOpacity>
       <View style={styles.container}>
         <View style={styles.logoBox}>
           <Text style={styles.textCozinha}>Cozinha da hamburgueria </Text>

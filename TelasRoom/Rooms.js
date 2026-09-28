@@ -30,9 +30,9 @@ export default function Rooms() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('TelaSuporte')}
+            onPress={() => navigation.navigate('Principal')}
           >
-          <Feather name="message-square" size={35} color="black" />
+          <Ionicons name="home-sharp" size={30} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Ambientes</Text>
           <TouchableOpacity

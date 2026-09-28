@@ -5,7 +5,6 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import EvilIcons from '@expo/vector-icons/EvilIcons'
-import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
 
 
@@ -48,37 +47,24 @@ export default function Notifications() {
       {/* Box Notification - Vazamento de gás */}
       <View style={styles.container}>
         <View style={styles.boxNotification}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          
+            <Text style={styles.textNotification}> Foi detectado gás no ambiente: Cozinha da hamburgueria</Text>
+          
+            <Text style={styles.text2Notification}>Caso não esteja cozinhando, existe a possibilidade de um pequeno vazamento de gás. Mantenha o cuidado e saia do local até a situação se estabilizar.</Text>
             <EvilIcons name="exclamation" size={35} color="red" />
-            <Text style={styles.textNotification}> Houve um vazamento de gás</Text>
-          </View>
-          <View>
-            <Text style={styles.text2Notification}>Mas não se preocupe ele já foi contido</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.bottom}
-            onPress={() => navigation.navigate('Notifications')}
-          >
-            <Text style={styles.text3Notification}> Ver mais </Text>
-          </TouchableOpacity>
+    
         </View>
       </View>
       {/* Box Notification - Umidade do ar */}
       <View style={styles.container}>
         <View style={styles.box2Notification}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <EvilIcons name="exclamation" size={35} color="#463f3f" />
-            <Text style={styles.textNotification}> Ligue seu umidificador </Text>
+            <EvilIcons name="exclamation" size={35} color="red" />
+            <Text style={styles.textNotification}> Umidade do ar abaixo de 40% (ar seco):</Text>
           </View>
           <View>
-            <Text style={styles.text2Notification}>O ar pode estar um pouco seco, a porcentagem ideal é de 50% a 60% </Text>
+            <Text style={styles.text2Notification}>Provoca ressecamento das mucosas e da pele, sangramento nasal, irritação nos olhos e agravamento de alergias. </Text>
           </View>
-          <TouchableOpacity
-            style={styles.bottom}
-            onPress={() => navigation.navigate('Notifications')}
-          >
-            <Text style={styles.text3Notification}> Ver mais </Text>
-          </TouchableOpacity>
         </View>
       </View>
 
@@ -128,10 +114,10 @@ const styles = StyleSheet.create({
   box2Notification: {
     backgroundColor: '#D9D9D9',
     width: '90%',
-    height: 150,
+    height: 170,
     borderRadius: 15,
     margin: 10,
-    padding: 5,
+    padding: 7,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -139,10 +125,10 @@ const styles = StyleSheet.create({
   boxNotification: {
     backgroundColor: '#FFEAD0',
     width: '90%',
-    height: 150,
+    height: 200,
     borderRadius: 15,
     margin: 10,
-    padding: 5,
+    padding: 7,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 100
@@ -151,7 +137,9 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 21,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 25,
+    textAlign: 'center', 
+    marginVertical: 5
   },
   text2Notification: {
     fontFamily: 'Manrope',

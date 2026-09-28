@@ -7,6 +7,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
+import AntDesign from '@expo/vector-icons/AntDesign'
 
 
 export default function Rooms3() {
@@ -26,17 +27,22 @@ export default function Rooms3() {
 
   return (
     <View style={styles.screen}>
-      <View style={styles.container}>
+      <TouchableOpacity 
+          style={{ marginTop: 50, marginBottom: 10, marginHorizontal: 20}}
+          onPress={() => navigation.navigate('Rooms')}
+        >
+          <AntDesign name="arrow-left" size={30} color="black" />
+        </TouchableOpacity>
+      <View style={{ alignItems: 'center', justifyContent: 'center',}}>
         <View style={styles.logoBox}>
           <Text style={styles.textCozinha}>Cozinha da Familia Zefir</Text>
           <Image
             source={require('../assets/Cozinha.png')}
             style={styles.image}
           />
-        </View>
       </View>
       {/* Box Sensor */}
-      <View style={styles.container}>
+      
         <View style={styles.boxSensor}>
           <View style={{ flexDirection: 'row' }}>
             <EvilIcons name="exclamation" size={23} color="gray" />
@@ -46,9 +52,8 @@ export default function Rooms3() {
             <Text style={styles.text2Card1}>Nenhum problema encontrado</Text>
           </View>
         </View>
-      </View>
+     
       {/* Box Sensor Configurações */}
-      <View style={styles.container}>
         <View style={styles.boxSensor2}>
           <View style={styles.columnsRow}>
 
@@ -97,8 +102,8 @@ export default function Rooms3() {
             </View>
           </View>
         </View>
+      
       </View>
-
 
     </View>
   )
@@ -109,18 +114,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F6F6F6',
   },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-
-  },
   boxSensor: {
     backgroundColor: '#D9D9D9',
     width: '90%',
     height: 80,
     borderRadius: 15,
-    margin: 10,
+    margin: 20,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -139,7 +138,7 @@ const styles = StyleSheet.create({
     height: 300,
     backgroundColor: "#A4B5C4",
     borderRadius: 15,
-    marginTop: 200
+    marginTop: 40
   },
   image: {
     width: '95%',
@@ -170,7 +169,7 @@ const styles = StyleSheet.create({
     margin: 5,
     padding: 10,
     alignItems: 'center',
-    marginBottom: 340
+    marginBottom: "50%"
   },
   boxConects: {
     backgroundColor: '#1FC72A',

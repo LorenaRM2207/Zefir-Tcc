@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     padding: 15,
-    width: '80%',
+    width: '85%',
     height: 200,
     backgroundColor: "#A4B5C4",
     borderRadius: 15,
@@ -346,12 +346,11 @@ const styles = StyleSheet.create({
   },
   boxConects: {
     backgroundColor: 'red',
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center'
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
