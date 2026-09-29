@@ -1,14 +1,23 @@
-import { useState, useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, ActivityIndicator } from 'react-native'
+//fontes
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
+//Gráficos
+import { useState, useEffect } from 'react'
+import { Picker } from '@react-native-picker/picker'
 import { BarChart } from 'react-native-gifted-charts'
-import AntDesign from '@expo/vector-icons/AntDesign'
 import { db } from '../config/firebase'
 import { collection, getDocs } from 'firebase/firestore'
+//icones
+
+const mesesParaNumero = {
+  'Jan': 0, 'Fev': 1, 'Mar': 2, 'Abr': 3,
+  'Mai': 4, 'Jun': 5, 'Jul': 6, 'Ago': 7,
+  'Set': 8, 'Out': 9, 'Nov': 10, 'Dez': 11,
+}
 
 export default function Calendar() {
-
+  //Dados do gráfico
   const [abaAtiva, setAbaAtiva] = useState('Diário')
   const [loading, setLoading] = useState(true)
 
@@ -17,6 +26,12 @@ export default function Calendar() {
   const [dadosUmidade, setDadosUmidade] = useState([])
   const [dadosGas, setDadosGas] = useState([])
 
+  //Filtro dos gráficos
+  const [diaSelecionado, setDiaSelecionado] = useState(28)
+  const [mesSelecionado, setMesSelecionado] = useState('Set')
+  const [anoSelecionado, setAnoSelecionado] = useState(2026)
+
+  //Fontes
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -26,30 +41,42 @@ export default function Calendar() {
   //função para puxar os dados 
   useEffect(() => {
     async function buscarDados() {
+      //nome da coleção 
       try {
         const querySnapshot = await getDocs(collection(db, 'Leitura_sensor'))
+
         const qualidade = []
         const umidade = []
         const gas = []
-        //dados que estão puxando para cada campo 
+
+        //nome dos campos
         querySnapshot.docs.forEach((doc) => {
+
           const item = doc.data()
-          qualidade.push({
-            value: item.ppm_gas,       
-            label: item.data_hora,
-          })
-          umidade.push({
-            value: item.umidade,
-            label: item.data_hora,
-          })
-          gas.push({
-            value: item.nivel_fumaca,
-            label: item.data_hora,
-          })
+          const dataDoDocumento = item.data_hora.toDate()
+
+          const mesNumero = mesesParaNumero[mesSelecionado]
+
+          if (
+            dataDoDocumento.getDate() === diaSelecionado &&
+            dataDoDocumento.getMonth() === mesNumero &&
+            dataDoDocumento.getFullYear() === anoSelecionado
+          ) {
+            const horaFormatada = dataDoDocumento.toLocaleTimeString('pt-BR', {
+              hour: '2-digit',
+              minute: '2-digit',
+            })
+
+            qualidade.push({ value: item.ppm_gas, label: horaFormatada })
+            umidade.push({ value: item.umidade, label: horaFormatada })
+            gas.push({ value: item.nivel_fumaca, label: horaFormatada })
+          }
         })
+        // Atualiza os dados
         setDadosQualidade(qualidade)
         setDadosUmidade(umidade)
         setDadosGas(gas)
+        //Em caso de erro
       } catch (error) {
         console.error("Erro ao buscar dados: ", error)
       } finally {
@@ -57,12 +84,54 @@ export default function Calendar() {
       }
     }
     buscarDados()
-  }, [])
+  }, [diaSelecionado, mesSelecionado, anoSelecionado])
   if (!fontsLoaded) {
     return null
   }
   return (
     <View style={styles.screen}>
+      <View style={styles.dataContainer}>
+
+        {/* Filtro dos dia */}
+        <View style={styles.boxData}>
+          <Picker
+            selectedValue={diaSelecionado}
+            onValueChange={(valor) => setDiaSelecionado(valor)}
+            style={styles.picker}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((dia) => (
+              <Picker.Item key={dia} label={String(dia)} value={dia} />
+            ))}
+          </Picker>
+        </View>
+
+        {/* Filtro do mês */}
+        <View style={styles.boxData}>
+          <Picker
+            selectedValue={mesSelecionado}
+            onValueChange={(valor) => setMesSelecionado(valor)}
+            style={styles.picker}
+          >
+            {['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'].map((mes) => (
+              <Picker.Item key={mes} label={mes} value={mes} />
+            ))}
+          </Picker>
+        </View>
+
+        {/* Filro do ano ano */}
+        <View style={styles.boxData}>
+          <Picker
+            selectedValue={anoSelecionado}
+            onValueChange={(valor) => setAnoSelecionado(valor)}
+            style={styles.picker}
+          >
+            {[2024, 2025, 2026, 2027].map((ano) => (
+              <Picker.Item key={ano} label={String(ano)} value={ano} />
+            ))}
+          </Picker>
+        </View>
+
+      </View>
       {/* Abas */}
       <View style={styles.abasContainer}>
         {['Anual', 'Mensal', 'Semanal', 'Diário'].map((aba) => (
@@ -191,5 +260,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#0F0F0F',
     paddingVertical: 30,
+  },
+  dataContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 10,
+    marginVertical: 15,
+  },
+  boxData: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  picker: {
+    width: 100,
+    height: 40,
   },
 })
