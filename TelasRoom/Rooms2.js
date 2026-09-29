@@ -114,7 +114,7 @@ export default function Rooms2() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FFFFFF',
   },
   container: {
     flex: 1,

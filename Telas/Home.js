@@ -251,6 +251,7 @@ export default function Home() {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={{ height: 100 }} />
           </ScrollView>
         </>
       )}
@@ -392,7 +393,7 @@ const styles = StyleSheet.create({
   //Geral
   screen: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FFFFFF',
   },
   //alinhamento
   container: {

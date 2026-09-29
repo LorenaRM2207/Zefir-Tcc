@@ -112,7 +112,7 @@ export default function Rooms3() {
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FFFFFF',
   },
   boxSensor: {
     backgroundColor: '#D9D9D9',

@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   //Geral
   screen: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#FFFFFF',
   },
   //alinhamento
   container: {
