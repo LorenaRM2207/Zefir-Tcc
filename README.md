@@ -5,4 +5,4 @@ Buscamos proteger vidas e patrimônios através do monitoramento em tempo real d
 
 Integrantes: Aurora Santos Gonçalvez, Letícia Anti De Freitas Andrade, Lorena Rodrigues Marinho, Marina Yumi Shinomiya Bruegnoli e Maycon Ryan Fontinele De Araújo
 
-Professora: Alicia 
+Professora: Alicia Stefany Da Silva e Nathane De Castro 
