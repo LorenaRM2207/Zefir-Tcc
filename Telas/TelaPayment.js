@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
@@ -15,6 +16,14 @@ import Feather from '@expo/vector-icons/Feather'
 
 export default function TelaBuy() {
 
+  const [valorResultado,setValorResultado] = React.useState(0)
+  
+      const somar =()=>{
+        setValorResultado(valorResultado + 1)
+      }
+      const subtratir =()=>{
+        setValorResultado(valorResultado - 1 )
+      }
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -51,7 +60,7 @@ export default function TelaBuy() {
 
       <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, marginLeft: 30, width: '50%', justifyContent: 'space-around' }}>
         <SimpleLineIcons name="handbag" size={30} color="black" />
-        <Text style={styles.textTitle}>Produtos (2)</Text>
+        <Text style={styles.textTitle}>Produtos ({valorResultado})</Text>
       </View>
 
       {/* Produto*/}
@@ -70,12 +79,16 @@ export default function TelaBuy() {
             </View>
             {/* Icone2 */}
             <View style={styles.bottomAdd}>
-              <TouchableOpacity>
-                <AntDesign name="minus-circle" size={15} color="blue" />
+              <TouchableOpacity
+              onPress={subtratir}
+              >
+                <AntDesign name="minus-circle" size={15} color="#A4B5C4" />
               </TouchableOpacity>
-              <Text style={styles.textNegrito}>2</Text>
-              <TouchableOpacity>
-                <AntDesign name="minus-circle" size={15} color="blue" />
+              <Text style={styles.textNegrito}>{valorResultado}</Text>
+              <TouchableOpacity
+              onPress={somar}
+              >
+                <Feather name="plus-circle" size={18} color="#A4B5C4" />
               </TouchableOpacity>
             </View>
           </View>

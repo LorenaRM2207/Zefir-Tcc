@@ -23,7 +23,7 @@ export default function Presentation2() {
 
     <View style={styles.screen}>
       {/* Cabeçalho */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 15, marginTop:30 }}>
         <Text style={styles.text2Card1}>1/3</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Principal')}>
           <Text style={styles.text2Card1}>Pular</Text>

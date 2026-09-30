@@ -111,7 +111,7 @@ export default function Calendar() {
     setDadosGas(finalizarBaldes(baldesGas))
   }
 
-  //--- SEMANAL: filtra por mês+ano, agrupa por dia da semana (1 a 7) ---
+  //Filtro Semanal
   function processarSemanal(querySnapshot) {
     const mesNumero = mesesParaNumero[mesSelecionado]
     const baldesQualidade = criarBaldes(diasDaSemana.map(String))
@@ -146,7 +146,7 @@ export default function Calendar() {
     setDadosGas(finalizarBaldes(baldesGas))
   }
 
-  //--- MENSAL: filtra por mês+ano, agrupa por faixa de dias (1-7, 8-14...) ---
+  //Filtro Mensal
   function processarMensal(querySnapshot) {
     const mesNumero = mesesParaNumero[mesSelecionado]
     const baldesQualidade = criarBaldes(faixasDeDias)
@@ -181,7 +181,7 @@ export default function Calendar() {
     setDadosGas(finalizarBaldes(baldesGas))
   }
 
-  //--- ANUAL: filtra só por ano, agrupa por mês (Jan a Dez) ---
+  //Filtro Anual
   function processarAnual(querySnapshot) {
     const baldesQualidade = criarBaldes(numerosParaMes)
     const baldesUmidade = criarBaldes(numerosParaMes)
@@ -213,7 +213,7 @@ export default function Calendar() {
     setDadosGas(finalizarBaldes(baldesGas))
   }
 
-  //--- Busca os dados e decide qual processamento usar, conforme a aba ativa ---
+  //Busca dos dados
   useEffect(() => {
     async function buscarDados() {
       try {
@@ -336,8 +336,8 @@ export default function Calendar() {
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
-                  yAxisTextStyle={{ color: '#0F0F0F' }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -358,8 +358,8 @@ export default function Calendar() {
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
-                  yAxisTextStyle={{ color: '#0F0F0F' }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -380,8 +380,8 @@ export default function Calendar() {
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
-                  yAxisTextStyle={{ color: '#0F0F0F' }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 16 }}
                   noOfSections={4}
                   frontColor="#D64545"
                 />
@@ -447,19 +447,19 @@ const styles = StyleSheet.create({
   boxGrafico: {
     width: '90%',
     borderRadius: 15,
-    padding: 15,
+    padding: 5,
     marginVertical: 10,
     alignItems: 'center',
   },
   titleGrafico: {
     fontFamily: 'ManropeBold',
-    fontSize: 16,
+    fontSize: 20,
     marginBottom: 15,
     alignSelf: 'flex-start',
   },
   textVazio: {
     fontFamily: 'Manrope',
-    fontSize: 14,
+    fontSize: 17,
     color: '#0F0F0F',
     paddingVertical: 30,
   },

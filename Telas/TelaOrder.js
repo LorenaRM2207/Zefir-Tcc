@@ -12,6 +12,7 @@ import Feather from '@expo/vector-icons/Feather'
 
 export default function TelaBuy() {
 
+
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,

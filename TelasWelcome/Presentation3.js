@@ -28,7 +28,7 @@ export default function Presentation3() {
     <View style={styles.screen}>
 
       {/* Cabeçalho */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 10 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 15, marginTop:30 }}>
         <Text style={styles.text2Card1}>2/3</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.text2Card1}>Pular</Text>

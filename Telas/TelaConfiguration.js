@@ -10,6 +10,9 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 
 
+import { sair } from "../services/auth"
+
+
 
 export default function TelaConfiguration() {
 
@@ -23,6 +26,11 @@ export default function TelaConfiguration() {
   if (!fontsLoaded) {
     return null
   }
+  async function realizarLogout(){
+    await sair()
+    navigation.navigate('Login')
+  }
+
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
@@ -93,6 +101,7 @@ export default function TelaConfiguration() {
       <View style={styles.container}>
         <TouchableOpacity
           style={{ flexDirection: 'row', margin: 20, alignItems: 'center' }}
+          onPress={realizarLogout}
         >
           <MaterialCommunityIcons name="location-exit" size={24} color="red" />
           <Text style={styles.textInformation3}>Desconectar todos</Text>
@@ -119,7 +128,7 @@ const styles = StyleSheet.create({
     width: '90%',
     justifyContent: 'center',
     marginTop: 50,
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
     marginBottom: 40
   },
   textHeader: {
@@ -139,7 +148,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
     justifyContent: 'center',
-    
+
 
   },
   columnsRow: {

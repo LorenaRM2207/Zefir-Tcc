@@ -1,3 +1,4 @@
+import * as React from 'react'
 import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
@@ -11,6 +12,14 @@ import Feather from '@expo/vector-icons/Feather'
 
 export default function TelaBuy() {
 
+  const [valorResultado,setValorResultado] = React.useState(0)
+
+    const somar =()=>{
+      setValorResultado(valorResultado + 1)
+    }
+    const subtratir =()=>{
+      setValorResultado(valorResultado - 1 )
+    }
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -53,11 +62,15 @@ export default function TelaBuy() {
         <View style={styles.boxGeral2}>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%', paddingRight: 70, marginBottom: 15 }}>
             <View style={styles.bottomAdd}>
-              <TouchableOpacity>
+              <TouchableOpacity
+              onPress={subtratir}
+              >
                 <AntDesign name="minus-circle" size={15} color="#A4B5C4" />
               </TouchableOpacity>
-              <Text style={styles.textNegrito}>2</Text>
-              <TouchableOpacity>
+              <Text style={styles.textNegrito}>{valorResultado}</Text>
+              <TouchableOpacity
+              onPress={somar}
+              >
               <Feather name="plus-circle" size={18} color="#A4B5C4" />
               </TouchableOpacity>
             </View>
