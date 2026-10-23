@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView  } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -26,6 +26,7 @@ export default function TelaSuporte() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      <ScrollView>
       <TouchableOpacity 
           style={{ marginTop: 50, marginBottom: 10, marginHorizontal: 20}}
           onPress={() => navigation.navigate('Principal')}
@@ -81,6 +82,7 @@ export default function TelaSuporte() {
         </View>
 
       </View>
+      </ScrollView>
     </View>
   )
 }

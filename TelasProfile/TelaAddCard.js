@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -6,11 +6,9 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 //icones
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
-import EvilIcons from '@expo/vector-icons/EvilIcons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
-import Ionicons from '@expo/vector-icons/Ionicons'
+
 
 
 
@@ -32,7 +30,7 @@ export default function TelaAddCard() {
       <View style={styles.container}>
         <TouchableOpacity
           style={{ flexDirection: 'row', marginTop: 180, alignItems: 'center', marginBottom: 10, width: '50%' }}
-          onPress={() => navigation.navigate('Principal')}
+          onPress={() => navigation.goBacke()}
         >
           <MaterialIcons name="keyboard-arrow-left" size={30} color="black" />
           <Text style={styles.textTitle}>Adicionar forma de pagamentos</Text>

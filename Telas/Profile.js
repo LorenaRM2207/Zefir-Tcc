@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image,ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -29,6 +29,7 @@ export default function Home() {
   return (
     //View principal
     <View style={styles.screen}>
+      <ScrollView>
       {/* Cabeçalho*/}
       <View style={styles.container}>
         <View style={styles.header}>
@@ -114,13 +115,7 @@ export default function Home() {
           </View>
         </TouchableOpacity>
       </View>
-
-
-
-
-
-
-
+      </ScrollView>
 
     </View>
   )

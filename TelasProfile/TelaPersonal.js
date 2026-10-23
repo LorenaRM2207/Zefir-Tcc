@@ -32,7 +32,7 @@ export default function Personal() {
       <View style={styles.container}>
         <TouchableOpacity 
           style={{flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10}}
-          onPress={() => navigation.navigate('Principal')}
+          onPress={() => navigation.goBack()}
         >
           <MaterialIcons name="keyboard-arrow-left" size={30} color="black" />
           <Text style={styles.textTitle}>Informações pessoais</Text>

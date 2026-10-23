@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -26,10 +26,11 @@ export default function Wallet() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      <ScrollView>
       <View style={styles.container}>
         <TouchableOpacity
           style={{ flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10 }}
-          onPress={() => navigation.navigate('Principal')}
+          onPress={() => navigation.goBack()}
         >
           <MaterialIcons name="keyboard-arrow-left" size={30} color="black" />
           <Text style={styles.textTitle}>Carteira</Text>
@@ -143,6 +144,7 @@ export default function Wallet() {
           <Text style={styles.textBottons}>Ver compras</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
 
     </View>
   )
