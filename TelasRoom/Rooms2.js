@@ -117,9 +117,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   container: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
 
   },
   boxSensor: {
@@ -127,7 +125,7 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 110,
     borderRadius: 15,
-    margin: 5,
+    margin: 10,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -146,7 +144,6 @@ const styles = StyleSheet.create({
     height: 300,
     backgroundColor: "#A4B5C4",
     borderRadius: 15,
-    marginTop: 130
   },
   image: {
     width: '95%',
@@ -174,10 +171,10 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 150,
     borderRadius: 15,
-    margin: 5,
+    margin: 20,
     padding: 10,
     alignItems: 'center',
-    marginBottom: 280
+
   },
   boxConects: {
     backgroundColor: '#1FC72A',
@@ -197,13 +194,12 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '100%',
+    width: '85%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    paddingVertical: 10,
     marginTop: 15,
   },
   alignConfigurations: {

@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 30,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 30,
     color: '#0F0F0F',
     marginHorizontal: 50
   },
