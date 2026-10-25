@@ -27,10 +27,11 @@ export default function TelaAddCard() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      <ScrollView>
       <View style={styles.container}>
         <TouchableOpacity
-          style={{ flexDirection: 'row', marginTop: 180, alignItems: 'center', marginBottom: 10, width: '50%' }}
-          onPress={() => navigation.goBacke()}
+          style={{ flexDirection: 'row', marginTop: 160, alignItems: 'center', marginBottom: 10, width: '60%' }}
+          onPress={() => navigation.goBack()}
         >
           <MaterialIcons name="keyboard-arrow-left" size={30} color="black" />
           <Text style={styles.textTitle}>Adicionar forma de pagamentos</Text>
@@ -125,6 +126,7 @@ export default function TelaAddCard() {
           <Text style={styles.textBottons}>Adicionar</Text>
         </TouchableOpacity>
       </View>
+      </ScrollView>
 
 
 
@@ -145,7 +147,6 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 22,
     letterSpacing: 1,
-    lineHeight: 20,
     color: '#0F0F0F',
   },
   //Caixas de informações
@@ -192,6 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 30,
-    marginTop: 20
+    marginTop: 20,
+    marginBottom:50
   },
 })

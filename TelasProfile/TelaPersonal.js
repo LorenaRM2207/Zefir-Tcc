@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text,ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -29,6 +29,7 @@ export default function Personal() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
+      <ScrollView>
       <View style={styles.container}>
         <TouchableOpacity 
           style={{flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10}}
@@ -136,7 +137,7 @@ export default function Personal() {
       </View>
       {/* Idioma*/}
       <View style={styles.container}>
-        <View style={styles.boxRooms}>
+        <View style={[styles.boxRooms, {marginBottom:50}]}>
           <View style={styles.columnsRow}>
             {/* Icone */}
             <View style={{paddingRight:30, paddingLeft:20}}>
@@ -150,6 +151,7 @@ export default function Personal() {
           </View>
         </View>
       </View>
+      </ScrollView>
 
     </View>
   )

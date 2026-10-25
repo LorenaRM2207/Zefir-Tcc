@@ -44,9 +44,7 @@ export default function Presentation2() {
       {/* Card inferior*/}
       <View style={styles.card1}>
         <View style={styles.titleContainer}>
-          <Text style={styles.textCard1}>
-            Conecte seu sensor
-          </Text>
+          <Text style={styles.textCard1}>Conecte seu sensor</Text>
         </View>
         <View style={styles.textContainer}>
           <Text style={styles.text2Card1}>
@@ -55,7 +53,7 @@ export default function Presentation2() {
           </Text>
         </View>
         <View>
-          {/* Botyão continuar */}
+          {/* Botão continuar */}
           <TouchableOpacity
             style={styles.bottom}
             onPress={() => navigation.navigate('Presentation3')}
@@ -126,7 +124,7 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.15,
     shadowRadius: 5,
-    elevation: 5,
+    elevation: 15,
     justifyContent: 'flex-start'
   },
   titleContainer: {

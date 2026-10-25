@@ -143,7 +143,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     padding: 10,
-    width: '80%',
+    width: '90%',
     height: 200,
     backgroundColor: "#A4B5C4",
     borderRadius: 15,
@@ -154,15 +154,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   image: {
-    width: 230,
-    height: 130,
+    width: 280,
+    height: 150,
     margin: 10,
     borderRadius: 10,
   },
   //Style Box Sensor
   boxSensor: {
     backgroundColor: '#D9D9D9',
-    width: '80%',
+    width: '90%',
     height: 80,
     borderRadius: 15,
     margin: 10,
@@ -173,12 +173,13 @@ const styles = StyleSheet.create({
   //Style Box Configurações sensor
   boxSensor2: {
     backgroundColor: '#D9D9D9',
-    width: '80%',
+    width: '90%',
     height: 150,
     borderRadius: 15,
     margin: 10,
-    padding: 10,
+    paddingHorizontal: 30,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   boxConects: {
     backgroundColor: '#1FC72A',
@@ -198,13 +199,12 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '110%',
+    width: '85%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    paddingVertical: 10,
     marginTop: 15,
   },
   alignConfigurations: {
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 5,
     elevation: 5,
-    justifyContent: 'flex-start'
+    
   },
   titleContainer: {
     width: '100%',

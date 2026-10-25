@@ -44,28 +44,25 @@ function BottomTabs() {
   return (
     //Rodapé - icones e nome
     <MyTabs.Navigator
-      screenOptions={{
+       screenOptions={{
         tabBarActiveTintColor: "#071739",
         tabBarInactiveTintColor: '#A4B5C4',
         tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: '#ffffff',
           position: 'absolute',
-          margin: 30,
-          height: 70,
+          left: 30,
+          right: 30,
+          bottom:40,
+          height: 50,
+          marginHorizontal:10,
           borderRadius: 45,
           borderTopWidth: 0,
           elevation: 10,
           shadowColor: '#000',
-          shadowOnset: { width: 0, height: 10 },
+          shadowOffset: { width: 0, height: 10 },
           shadowOpacity: 0.3,
           shadowRadius: 10,
-        },
-        tabBarIconStyle: {
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: '100%',
-          height: '100%',
         },
       }}
     >

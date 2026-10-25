@@ -56,7 +56,9 @@ export default function Home() {
           />
           </TouchableOpacity>
         </View>
+      
       </View>
+      <ScrollView>
           <View style={styles.logoContainer}>
             <View style={styles.logoBox}>
               <Image
@@ -113,14 +115,15 @@ export default function Home() {
                     </View>
                     <Text style={styles.textConfiguration}> - </Text>
                   </View>
-                  <View style={styles.boxConects3}>
+                  <View style={[styles.boxConects3,{width:'78%'}]}>
                     <Feather name="power" size={20} color="#D64545" />
-                    <Text style={styles.textConfiguration}> Desligar sensor</Text>
+                    <Text style={[styles.textConfiguration,{fontSize: 15}]}> Desligar sensor</Text>
                   </View>
                 </View>
               </View>
             </View>
           </View>
+          </ScrollView>
 
         </>
       ) : (
@@ -219,9 +222,9 @@ export default function Home() {
           {/* Box Notification - Vazamento de gás */}
           <View style={styles.container}>
             <View style={styles.boxNotification}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center'}}>
                 <EvilIcons name="exclamation" size={35} color="red" />
-                <Text style={styles.textNotification}> Houve um vazamento de gás</Text>
+                <Text style={styles.textNotification }> Houve um vazamento de gás</Text>
               </View>
               <View>
                 <Text style={styles.text2Notification}>Mas não se preocupe ele já foi contido</Text>
@@ -356,13 +359,12 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '100%',
+    width: '85%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    paddingVertical: 10,
     marginTop: 15,
   },
   alignConfigurations: {
@@ -468,7 +470,7 @@ const styles = StyleSheet.create({
   boxNotification: {
     backgroundColor: '#FFEAD0',
     width: '90%',
-    height: 150,
+    height: 180,
     borderRadius: 15,
     margin: 10,
     padding: 5,
@@ -477,9 +479,9 @@ const styles = StyleSheet.create({
   },
   textNotification: {
     fontFamily: 'ManropeBold',
-    fontSize: 21,
+    fontSize: 19,
     letterSpacing: 1,
-    lineHeight: 20,
+    textAlign:'center'
   },
   text2Notification: {
     fontFamily: 'Manrope',

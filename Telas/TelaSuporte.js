@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 22,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 30,
     color: '#0F0F0F',
   },
   textInformation2: {
@@ -137,10 +137,11 @@ const styles = StyleSheet.create({
   Card: {
     backgroundColor: 'rgba(164, 181, 196, 0.2)',
     width: '90%',
-    height: 450,
+    height: 490,
     borderRadius: 30,
     margin: 20,
     alignItems: 'center',
-    padding:20
+    padding:20, 
+    marginBottom:50
   },
 })

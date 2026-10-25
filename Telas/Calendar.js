@@ -34,7 +34,7 @@ function faixaHorariaIndex(hora) {
   if (hora >= 13 && hora <= 15) return 4
   if (hora >= 16 && hora <= 18) return 5
   if (hora >= 19 && hora <= 21) return 6
-  return 7 
+  return 7
 }
 //Dias
 function faixaDiaIndex(dia) {
@@ -475,9 +475,14 @@ const styles = StyleSheet.create({
   boxData: {
     backgroundColor: 'white',
     overflow: 'hidden',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#A4B5C4',
+    justifyContent: 'center',
   },
   filtro: {
     width: 100,
-    height: 40,
+    height: 50,
+    color: '#0F0F0F',
   },
 })

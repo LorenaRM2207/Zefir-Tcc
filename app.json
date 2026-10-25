@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "BancoDeDados-Zefir",
-    "slug": "BancoDeDados-Zefir",
+    "slug": "zefir-tcc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -29,6 +29,12 @@
           "backgroundColor": "#ffffff"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "dcd8a4bc-c504-4c50-a60d-212613870b27"
+      }
+    },
+    "owner": "lorenarmarinho"
   }
 }

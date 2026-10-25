@@ -58,7 +58,7 @@ export default function Notifications() {
       {/* Box Notification - Umidade do ar */}
       <View style={styles.container}>
         <View style={styles.box2Notification}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal:20}}>
             <EvilIcons name="exclamation" size={35} color="red" />
             <Text style={styles.textNotification}> Umidade do ar abaixo de 40% (ar seco):</Text>
           </View>
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   boxNotification: {
     backgroundColor: '#FFEAD0',
     width: '90%',
-    height: 200,
+    height: 250,
     borderRadius: 15,
     margin: 10,
     padding: 7,

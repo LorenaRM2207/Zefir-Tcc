@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 22,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 30,
     color: '#0F0F0F',
   },
   //Caixas de informações
@@ -227,6 +227,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 30,
-    margin: 10
+    margin: 10,
+    marginBottom: 50
   },
 })

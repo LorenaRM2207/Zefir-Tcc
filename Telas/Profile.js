@@ -23,7 +23,7 @@ export default function Home() {
   })
 
   const navigation = useNavigation()
-  
+
   if (!fontsLoaded) {
     return null
   }
@@ -68,7 +68,7 @@ export default function Home() {
         >
           <View style={styles.columnsRow}>
             {/* Icone */}
-            <View>
+            <View style={{paddingRight:20, paddingLeft:10}}>
               <FontAwesome5 name="user" size={30} color="#6C7072" />
             </View>
             {/* Texto */}
@@ -106,7 +106,7 @@ export default function Home() {
         >
           <View style={styles.columnsRow}>
             {/* Icone */}
-            <View>
+            <View  style={{paddingRight:20, paddingLeft:10}}>
               <MaterialIcons name="payment" size={35} color="#6C7072" />
             </View>
             {/* Texto */}

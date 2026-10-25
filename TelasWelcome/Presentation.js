@@ -1,4 +1,4 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, Image,ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -23,11 +23,13 @@ export default function Presentation() {
 
     <View style={styles.screen}>
       {/* imagem do fundo */}
+      
       <ImageBackground
         source={require('../assets/fundo.png')}
         style={styles.background}
         resizeMode="cover"
       >
+        
         <View style={styles.container}>
           <Image
             source={require('../assets/Logo.png')}
@@ -52,7 +54,9 @@ export default function Presentation() {
             </TouchableOpacity>
           </View>
         </View>
+        
       </ImageBackground>
+      
     </View>
 
 
@@ -82,7 +86,7 @@ const styles = StyleSheet.create({
   card1: {
     backgroundColor: "#FFFFFF",
     width: '100%',
-    height: '30%',
+    height: '35%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingVertical: 20,
@@ -108,7 +112,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 40,
     flexDirection: 'row',
-    paddingHorizontal: 20
+    paddingHorizontal: 20, 
+    marginBottom: 40
   },
   textBottom: {
     fontFamily: 'Manrope',
