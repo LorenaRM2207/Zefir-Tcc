@@ -29,7 +29,7 @@ export default function TelaSuporte() {
       <ScrollView>
       <TouchableOpacity 
           style={{ marginTop: 50, marginBottom: 10, marginHorizontal: 20}}
-          onPress={() => navigation.navigate('Principal')}
+          onPress={() => navigation.goBack()}
         >
           <AntDesign name="arrow-left" size={30} color="black" />
         </TouchableOpacity>

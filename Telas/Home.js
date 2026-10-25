@@ -26,11 +26,12 @@ export default function Home() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
+  const navigation = useNavigation()
 
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
+  
   return (
 
     //View principal

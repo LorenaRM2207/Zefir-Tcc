@@ -1,4 +1,5 @@
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView, ActivityIndicator, Image } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 //fontes
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -237,6 +238,8 @@ export default function Calendar() {
 
     buscarDados()
   }, [abaAtiva, diaSelecionado, mesSelecionado, anoSelecionado])
+
+  const navigation = useNavigation()
 
   if (!fontsLoaded) {
     return null
