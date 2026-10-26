@@ -201,19 +201,19 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '90%',
+    width: '80%',
     justifyContent: 'center',
     marginTop: 50, 
-    paddingHorizontal: 10, 
+    paddingHorizontal: 20, 
     margin: 10
   },
   textHeader: {
     fontFamily: 'ManropeBold',
     fontSize: 30,
     letterSpacing: 2,
-    lineHeight: 30,
+    lineHeight: 40,
     color: '#0F0F0F',
-    marginHorizontal: 60, 
+    marginHorizontal: 10, 
     textAlign: 'center'
   },
   imageHeader: {
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 22,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 30,
     color: '#0F0F0F',
   },
   columnsRow: {

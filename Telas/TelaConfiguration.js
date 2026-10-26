@@ -38,7 +38,7 @@ export default function TelaConfiguration() {
       <View style={styles.container}>
         <View style={styles.header}>
           <TouchableOpacity
-            onPress={() => navigation.navigate('Principal')}
+            onPress={() => navigation.goBack()}
           >
             <AntDesign name="arrow-left" size={30} color="black" />
           </TouchableOpacity>
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 30,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 40,
     color: '#0F0F0F',
     marginHorizontal: 30
   },

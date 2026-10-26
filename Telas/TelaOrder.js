@@ -112,7 +112,6 @@ const styles = StyleSheet.create({
     marginTop: 50, 
     paddingHorizontal: 20, 
     margin:10
-   
   },
   textHeader: {
     fontFamily: 'ManropeBold',
