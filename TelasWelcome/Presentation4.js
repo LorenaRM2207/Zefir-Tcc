@@ -178,13 +178,12 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '110%',
+    width: '85%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 15,
-    paddingVertical: 10,
     marginTop: 15,
   },
   alignConfigurations: {

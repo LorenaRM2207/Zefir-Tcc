@@ -334,13 +334,16 @@ export default function Calendar() {
                 <BarChart
                   data={dadosQualidade}
                   barWidth={18}
-                  spacing={16}
+                  spacing={22}
+                  initialSpacing={10}
+                  labelWidth={44}
                   roundedTop
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
+                  yAxisLabelTexts={['Péssima', 'Muito Ruim', 'Ruim', 'Moderada', 'Boa']}
                   yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
                   noOfSections={4}
                   frontColor="#071739"
                 />

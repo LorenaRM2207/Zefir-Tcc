@@ -1,14 +1,22 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput } from 'react-native'
+import { useState } from 'react'
+import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, Alert, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+//Add newRoom
+import * as ImagePicker from 'expo-image-picker'
+import { ImageManipulator, SaveFormat } from 'expo-image-manipulator'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import { db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import Feather from '@expo/vector-icons/Feather'
 
-
-
 export default function NewRoom() {
+
+  const [nome, setNome] = useState('')
+  const [foto, setFoto] = useState(null)
+  const [salvando, setSalvando] = useState(false)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -16,11 +24,54 @@ export default function NewRoom() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
-
+  const navigation = useNavigation()
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
+  async function selecionarImagem() {
+    const resultado = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    })
+    if (resultado.canceled) return
+
+    const contexto = ImageManipulator.manipulate(resultado.assets[0].uri)
+    contexto.resize({ width: 600 })
+    const imagem = await contexto.renderAsync()
+    const salva = await imagem.saveAsync({
+      format: SaveFormat.JPEG,
+      compress: 0.5,
+      base64: true,
+    })
+    setFoto(`data:image/jpeg;base64,${salva.base64}`)
+  }
+  async function salvarAmbiente() {
+    if (!nome.trim()) {
+      Alert.alert('Atenção', 'Digite o nome do ambiente.')
+      return
+    }
+    if (!foto) {
+      Alert.alert('Atenção', 'Selecione uma imagem.')
+      return
+    }
+    try {
+      setSalvando(true)
+      await addDoc(collection(db, 'Ambiente'), {
+        id_ambiente: Date.now(),
+        nome_comodo: nome.trim(),
+        foto: foto,
+        criado_em: serverTimestamp(),
+      })
+      navigation.navigate('Rooms')
+    } catch (erro) {
+      console.error('Erro ao salvar ambiente: ', erro)
+      Alert.alert('Erro', 'Não foi possível salvar o ambiente.')
+    } finally {
+      setSalvando(false)
+    }
+  }
   return (
     <View style={styles.screen}>
       {/* Cabeçalho*/}
@@ -29,16 +80,16 @@ export default function NewRoom() {
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaSuporte')}
           >
-          <Feather name="message-square" size={35} color="black" />
+            <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Ambientes</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
           >
-          <Image
-            source={require('../assets/Avatar.png')}
-            style={styles.imageHeader}
-          />
+            <Image
+              source={require('../assets/Avatar.png')}
+              style={styles.imageHeader}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -50,23 +101,31 @@ export default function NewRoom() {
       <Text style={styles.textTitle}>Nome</Text>
       <View style={styles.container}>
         <View style={styles.boxAddNome}>
-        <View style={styles.textInputNome}>
-          <TextInput
-            style={{ fontSize: 17, fontFamily: 'Manrope' }}
-            placeholder='Pesquisar ambiente'
-            placeholderTextColor="#6C757D"
-          />
+          <View style={styles.textInputNome}>
+            <TextInput
+              style={{ fontSize: 17, fontFamily: 'Manrope' }}
+              placeholder='Pesquisar ambiente'
+              placeholderTextColor="#6C757D"
+              value={nome}
+              onChange={setNome}
+            />
+          </View>
         </View>
-      </View>
       </View>
       <Text style={styles.textTitle}>Foto</Text>
       <View style={styles.container}>
         <View style={styles.boxFoto}>
           <View style={styles.boxFoto2}>
-
+            {foto && (
+              <Image
+                souce={{ uri: foto}}
+                style={{ width :'100%', height: '100%', borderRadius: 30}}
+              />
+            )}
           </View>
           <TouchableOpacity
             style={styles.bottonSelect}
+            onPress={selecionarImagem}
           >
             <Text style={styles.textBottons}>Selecionar imagem</Text>
           </TouchableOpacity>
@@ -75,9 +134,11 @@ export default function NewRoom() {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.bottomAdd}
-          onPress={() => navigation.navigate('Rooms')}
+          onPress={salvarAmbiente}
+          disabled={salvando}
         >
-          <Text style={styles.textBottons}>Atribuir sensor </Text>
+          ? <ActivityIndicator color='white' />
+          : <Text style={styles.textBottons}>Atribuir sensor </Text>
         </TouchableOpacity>
       </View>
 
@@ -101,7 +162,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     justifyContent: 'center',
-    marginTop: 50, 
+    marginTop: 50,
     paddingHorizontal: 10
   },
   textHeader: {
@@ -134,7 +195,7 @@ const styles = StyleSheet.create({
   textTitle: {
     fontFamily: 'ManropeBold',
     fontSize: 20,
-    color: 'black', 
+    color: 'black',
     marginLeft: 50
   },
   //Box Add Nome
@@ -145,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    margin:10
+    margin: 10
   },
   textInputNome: {
     backgroundColor: 'white',
@@ -164,22 +225,22 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
-    margin:10
+    margin: 10
   },
-  boxFoto2:{
+  boxFoto2: {
     backgroundColor: '#FFFFFF',
     width: '90%',
     height: 210,
     borderRadius: 30,
     alignItems: 'center',
-    marginBottom: 20, 
+    marginBottom: 20,
   },
-  bottonSelect:{
-    backgroundColor: 'rrgb(164, 181, 196)', 
-    width: '50%', 
-    height: 50, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
+  bottonSelect: {
+    backgroundColor: 'rgb(164, 181, 196)',
+    width: '50%',
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30,
   },
   textBottons: {
@@ -188,13 +249,13 @@ const styles = StyleSheet.create({
     color: 'white'
   },
   //
-  bottomAdd:{
-    backgroundColor: '#071739', 
-    width: '40%', 
-    height: 40, 
-    alignItems: 'center', 
-    justifyContent: 'center', 
+  bottomAdd: {
+    backgroundColor: '#071739',
+    width: '40%',
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 30,
-    margin:10
+    margin: 10
   },
 })
