@@ -18,7 +18,6 @@ import Presentation5 from './TelasWelcome/Presentation5'
 import Cadastro from './TelasLogin/TelaCadastro'
 import Login from './TelasLogin/TelaLogin'
 import RecuperarSenha from './TelasLogin/TelaRecuperarSenha'
-import RecuperarSenha2 from './TelasLogin/TelaRecuperarSenha2'
 import Rooms from './TelasRoom/Rooms'
 import Rooms2 from './TelasRoom/Rooms2'
 import Rooms3 from './TelasRoom/Rooms3'
@@ -149,10 +148,6 @@ export default function Route() {
       <Stack.Screen
         name="RecuperarSenha"
         component={RecuperarSenha}
-      />
-      <Stack.Screen
-        name="RecuperarSenha2"
-        component={RecuperarSenha2}
       />
       {/* Tela Home */}
       <Stack.Screen

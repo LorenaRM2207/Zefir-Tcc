@@ -67,6 +67,18 @@ export default function Notifications() {
           </View>
         </View>
       </View>
+      {/* Box Notification - Umidade do ar - LIda*/}
+      <View style={styles.container}>
+        <View style={[styles.box2Notification, {backgroundColor: 'rgba(217, 217, 217, 0.53)'}]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal:20}}>
+            <EvilIcons name="exclamation" size={35} color="gray" />
+            <Text style={[styles.textNotification, {color:'gray'}]}> Umidade do ar abaixo de 20% (ar seco):</Text>
+          </View>
+          <View>
+            <Text style={[styles.text2Notification, {color:'gray'}]}>Provoca ressecamento das mucosas e da pele, sangramento nasal, irritação nos olhos e agravamento de alergias. </Text>
+          </View>
+        </View>
+      </View>
 
 
 

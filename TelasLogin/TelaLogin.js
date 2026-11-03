@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 
 import { entrar } from '../services/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -23,20 +24,22 @@ export default function Login() {
   if (!fontsLoaded) {
     return null
   }
-  
+
 
   async function realizarLogin() {
-    if (!email || !senha) {
-      alert('Preencha todos os campos.')
-      return
-    }
-
     try {
-      await entrar(email, senha)
+      const cred = await signInWithEmailAndPassword(auth, email.trim(), senha)
+
+      if (!cred.user.emailVerified) {
+        await sendEmailVerification(cred.user) // reenvia o link
+        await signOut(auth)
+        Alert.alert('E-mail não verificado', 'Reenviamos o link de confirmação. Confira sua caixa de entrada e o spam.')
+        return
+      }
+
       navigation.navigate('Principal')
-    } catch (error) {
-      alert('Email ou senha incorretos.')
-      console.log(error)
+    } catch (erro) {
+      Alert.alert('Erro', 'E-mail ou senha incorretos.')
     }
   }
 

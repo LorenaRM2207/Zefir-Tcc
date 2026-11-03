@@ -1,12 +1,19 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useState } from 'react'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Alert, ActivityIndicator } from 'react-native'
+import { sendPasswordResetEmail } from 'firebase/auth'
+import { auth } from '../config/firebase'
+import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
-import { useFonts } from 'expo-font';
-import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useFonts } from 'expo-font'
+import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
 
 export default function RecuperarSenha() {
+
+  const navigation = useNavigation()
+  const [email, setEmail] = useState('')
+  const [enviando, setEnviando] = useState(false)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -18,7 +25,27 @@ export default function RecuperarSenha() {
   if (!fontsLoaded) {
     return null;
   }
-  const navigation = useNavigation()
+  async function enviarLink() {
+    if (!email.trim()) {
+      Alert.alert('Atenção', 'Digite seu e-mail.')
+      return
+    }
+    try {
+      setEnviando(true)
+      await sendPasswordResetEmail(auth, email.trim())
+      navigation.navigate('Login')
+    } catch (erro) {
+      if (erro.code === 'auth/invalid-email') {
+        Alert.alert('Erro', 'E-mail inválido.')
+      } else if (erro.code === 'auth/too-many-requests') {
+        Alert.alert('Erro', 'Muitas tentativas. Tente de novo mais tarde.')
+      } else {
+        Alert.alert('Erro', 'Não foi possível enviar o e-mail.')
+      }
+    } finally {
+      setEnviando(false)
+    }
+  }
 
   return (
     <View style={styles.screen}>
@@ -50,20 +77,14 @@ export default function RecuperarSenha() {
           {/* Informações*/}
           <TextInput
             style={styles.boxTextInput}
-            placeholder='E-mail ou número de telefone'
-            placeholderTextColor="#6C757D"
-          />
-          <TextInput
-            style={styles.boxTextInput}
-            placeholder='Inserir Código'
+            placeholder='Digite seu email'
             placeholderTextColor="#6C757D"
           />
           {/* Botão */}
-          <TouchableOpacity
-            style={styles.bottom}
-            onPress={() => navigation.navigate('RecuperarSenha2')}
-          >
-            <Text style={styles.textBottom}> Continuar</Text>
+          <TouchableOpacity style={styles.bottom} onPress={enviarLink} disabled={enviando}>
+            {enviando
+              ? <ActivityIndicator color="white" />
+              : <Text style={styles.textBottom}>Enviar link</Text>}
           </TouchableOpacity>
         </View>
       </ImageBackground>

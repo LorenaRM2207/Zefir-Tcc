@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 
-import { cadastrar } from '../services/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
 
 export default function Cadastro() {
 
@@ -24,20 +24,27 @@ export default function Cadastro() {
     return null;
   }
   async function realizarCadastro() {
-    if (!email || !senha) {
-      alert('Preencha todos os campos.')
-      return
-    }
-
     try {
-      await cadastrar(email, senha)
-      alert('Usuário cadastrado!')
-      navigation.navigate('Login')
-    } catch (error) {
-      alert('Não foi possível cadastrar o usuário.')
-      console.log(error)
+    const cred = await createUserWithEmailAndPassword(auth, email.trim(), senha)
+    await sendEmailVerification(cred.user)
+    await signOut(auth) 
+    Alert.alert(
+      'Verifique seu e-mail',
+      'Enviamos um link de confirmação. Clique nele e depois faça login.',
+      [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+    )
+  } catch (erro) {
+    if (erro.code === 'auth/email-already-in-use') {
+      Alert.alert('Erro', 'Esse e-mail já está cadastrado.')
+    } else if (erro.code === 'auth/invalid-email') {
+      Alert.alert('Erro', 'E-mail inválido.')
+    } else if (erro.code === 'auth/weak-password') {
+      Alert.alert('Erro', 'A senha precisa ter pelo menos 6 caracteres.')
+    } else {
+      Alert.alert('Erro', 'Não foi possível criar a conta.')
     }
   }
+}
 
   return (
     <View style={styles.screen}>
