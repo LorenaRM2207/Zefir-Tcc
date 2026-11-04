@@ -79,6 +79,11 @@ export default function RecuperarSenha() {
             style={styles.boxTextInput}
             placeholder='Digite seu email'
             placeholderTextColor="#6C757D"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
           />
           {/* Botão */}
           <TouchableOpacity style={styles.bottom} onPress={enviarLink} disabled={enviando}>

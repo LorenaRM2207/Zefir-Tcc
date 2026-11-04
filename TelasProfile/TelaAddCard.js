@@ -1,4 +1,5 @@
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native'
+import { useState } from 'react'
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView, TextInput, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -9,11 +10,54 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Feather from '@expo/vector-icons/Feather'
 
+//validação dos numeros 
+function cartaoValido(n) {
+  const d = n.replace(/\D/g, '')
+  if (d.length < 13 || d.length > 19) return false
+  let soma = 0
+  let dobrar = false
+  for (let i = d.length - 1; i >= 0; i--) {
+    let x = Number(d[i])
+    if (dobrar) {
+      x *= 2
+      if (x > 9) x -= 9
+    }
+    soma += x
+    dobrar = !dobrar
+  }
+  return soma % 10 === 0
+}
+//validação da bandeira
+function bandeira(n) {
+  const d = n.replace(/\D/g, '')
+  if (/^4/.test(d)) return 'Visa'
+  if (/^(5[1-5]|2[2-7])/.test(d)) return 'Mastercard'
+  if (/^(636368|438935|504175|451416|636297|5067|4576|4011|506699)/.test(d)) return 'Elo'
+  if (/^3[47]/.test(d)) return 'Amex'
+  return 'Desconhecida'
+}
+// validação da data de validade
+function validadeValida(v) {
+  const m = v.match(/^(\d{2})\/(\d{2})$/)
+  if (!m) return false
+  const mes = Number(m[1])
+  const ano = 2000 + Number(m[2])
+  if (mes < 1 || mes > 12) return false
+  const hoje = new Date()
+  return ano > hoje.getFullYear() || (ano === hoje.getFullYear() && mes >= hoje.getMonth() + 1)
+}
 
 
 
 export default function TelaAddCard() {
-
+  const navigation = useNavigation()
+  //dados
+  const [nome, setNome] = useState('')
+  const [numero, setNumero] = useState('')
+  const [validade, setValidade] = useState('')
+  const [cvv, setCvv] = useState('')
+  const [apelido, setApelido] = useState('')
+  //fontes
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -24,7 +68,6 @@ export default function TelaAddCard() {
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
   return (
     <View style={styles.screen}>
       <ScrollView>
