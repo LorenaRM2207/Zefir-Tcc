@@ -25,19 +25,14 @@ export default function Login() {
     return null
   }
 
-
   async function realizarLogin() {
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email.trim(), senha)
-
-      if (!cred.user.emailVerified) {
-        await sendEmailVerification(cred.user) // reenvia o link
-        await signOut(auth)
-        Alert.alert('E-mail não verificado', 'Reenviamos o link de confirmação. Confira sua caixa de entrada e o spam.')
-        return
-      }
-
-      navigation.navigate('Principal')
+    if (!email || !senha) {
+Alert.alert("Atenção", "Preencha todos os campos.");
+return;
+}
+try {
+await entrar (email, senha);
+navigation.navigate("Principal");
     } catch (erro) {
       Alert.alert('Erro', 'E-mail ou senha incorretos.')
     }

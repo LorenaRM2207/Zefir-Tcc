@@ -7,6 +7,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6'
 
 export default function Presentation() {
 
+  const navigation = useNavigation()
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -17,7 +18,6 @@ export default function Presentation() {
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
 
   return (
 

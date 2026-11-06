@@ -1,4 +1,4 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Image } from 'react-native'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Image, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
 //fonte de aplicativo
