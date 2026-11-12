@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Alert, ActivityIndicator } from 'react-native'
 import { sendPasswordResetEmail } from 'firebase/auth'
 import { auth } from '../config/firebase'
@@ -9,11 +9,21 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
 
+const MAX_TENTATIVAS = 3
+const ESPERA_SEGUNDOS = 60
+
+function emailValido(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)
+}
+
 export default function RecuperarSenha() {
 
   const navigation = useNavigation()
   const [email, setEmail] = useState('')
   const [enviando, setEnviando] = useState(false)
+  const [tentativas, setTentativas] = useState(0)
+  const [segundos, setSegundos] = useState(0)
+  const [mensagem, setMensagem] = useState(null)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -21,27 +31,51 @@ export default function RecuperarSenha() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
+  useEffect(() => {
+    if (segundos <= 0) return
+    const t = setTimeout(() => setSegundos((s) => s - 1), 1000)
+    return () => clearTimeout(t)
+  }, [segundos])
 
   if (!fontsLoaded) {
     return null;
   }
   async function enviarLink() {
-    if (!email.trim()) {
-      Alert.alert('Atenção', 'Digite seu e-mail.')
+    if (enviando || segundos > 0) return
+
+    if (tentativas >= MAX_TENTATIVAS) {
+      setMensagem({
+        texto: 'Limite de tentativas atingido. Tente novamente mais tarde.',
+        tipo: 'erro',
+      })
+      return
+    }
+    const emailLimpo = email.trim()
+    if (!emailLimpo) {
+      setMensagem({ texto: 'Digite seu e-mail.', tipo: 'erro' })
+      return
+    }
+    if (!emailValido(emailLimpo)) {
+      setMensagem({ texto: 'E-mail inválido. Use o formato nome@dominio.com.', tipo: 'erro' })
       return
     }
     try {
       setEnviando(true)
-      await sendPasswordResetEmail(auth, email.trim())
-      navigation.navigate('Login')
+      setMensagem(null)
+      await sendPasswordResetEmail(auth, emailLimpo)
+      setTentativas((t) => t + 1)
+      setSegundos(ESPERA_SEGUNDOS)
+      setMensagem({
+        texto: 'Se esse e-mail estiver cadastrado, você receberá um link para criar uma nova senha. Confira também o spam.',
+        tipo: 'sucesso',
+      })
     } catch (erro) {
-      if (erro.code === 'auth/invalid-email') {
-        Alert.alert('Erro', 'E-mail inválido.')
-      } else if (erro.code === 'auth/too-many-requests') {
-        Alert.alert('Erro', 'Muitas tentativas. Tente de novo mais tarde.')
-      } else {
-        Alert.alert('Erro', 'Não foi possível enviar o e-mail.')
-      }
+      console.error('Erro ao enviar link: ', erro)
+      let texto = 'Não foi possível enviar o e-mail. Tente novamente.'
+      if (erro.code === 'auth/invalid-email') texto = 'E-mail inválido.'
+      else if (erro.code === 'auth/too-many-requests') texto = 'Muitas tentativas. Aguarde alguns minutos e tente de novo.'
+      else if (erro.code === 'auth/network-request-failed') texto = 'Sem conexão. Verifique sua internet.'
+      setMensagem({ texto, tipo: 'erro' })
     } finally {
       setEnviando(false)
     }
@@ -55,6 +89,11 @@ export default function RecuperarSenha() {
         style={styles.background}
         resizeMode="cover"
       >
+        {mensagem && (
+          <View style={[styles.aviso, mensagem.tipo === 'sucesso' ? styles.avisoSucesso : styles.avisoErro]}>
+            <Text style={styles.textAviso}>{mensagem.texto}</Text>
+          </View>
+        )}
         {/* Cabeçalho */}
         <View style={{ alignSelf: 'center', justifyContent: 'flex-start', marginTop: 90, marginBottom: 130 }}>
           <Text style={styles.textPrincipal}>Recuperar Senha</Text>
@@ -80,16 +119,39 @@ export default function RecuperarSenha() {
             placeholder='Digite seu email'
             placeholderTextColor="#6C757D"
             value={email}
-            onChangeText={setEmail}
+            onChangeText={(t) => { setEmail(t); setMensagem(null) }}
             keyboardType="email-address"
             autoCapitalize="none"
             autoCorrect={false}
           />
           {/* Botão */}
-          <TouchableOpacity style={styles.bottom} onPress={enviarLink} disabled={enviando}>
-            {enviando
-              ? <ActivityIndicator color="white" />
-              : <Text style={styles.textBottom}>Enviar link</Text>}
+          <TouchableOpacity
+            style={[styles.bottom, (enviando || segundos > 0 || tentativas >= MAX_TENTATIVAS) && styles.bottomDesativado]}
+            onPress={enviarLink}
+            disabled={enviando || segundos > 0 || tentativas >= MAX_TENTATIVAS}
+          >
+            {enviando ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <Text style={styles.textBottom}>
+                {tentativas >= MAX_TENTATIVAS
+                  ? 'Limite atingido'
+                  : segundos > 0
+                    ? `Reenviar em ${segundos}s`
+                    : tentativas > 0
+                      ? 'Reenviar link'
+                      : 'Enviar link'}
+              </Text>
+            )}
+          </TouchableOpacity>
+          {tentativas > 0 && tentativas < MAX_TENTATIVAS && (
+            <Text style={styles.textInfo}>
+              Tentativas restantes: {MAX_TENTATIVAS - tentativas}
+            </Text>
+          )}
+
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.textVoltar}>Voltar ao login</Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -155,5 +217,37 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope',
     fontSize: 20,
     color: '#ffff',
-  }
+  },
+  bottomDesativado: {
+    opacity: 0.5,
+  },
+  textInfo: {
+    fontFamily: 'Manrope',
+    fontSize: 14,
+    color: '#E3E6DC',
+  },
+  textVoltar: {
+    fontFamily: 'ManropeBold',
+    fontSize: 17,
+    color: '#ffff',
+    textDecorationLine: 'underline',
+  },
+  aviso: {
+    position: 'absolute',
+    top: 50,
+    left: 20,
+    right: 20,
+    padding: 15,
+    borderRadius: 15,
+    zIndex: 10,
+    elevation: 10,
+  },
+  avisoSucesso: { backgroundColor: '#1FC72A' },
+  avisoErro: { backgroundColor: '#D64545' },
+  textAviso: {
+    fontFamily: 'ManropeBold',
+    fontSize: 15,
+    color: 'white',
+    textAlign: 'center',
+  },
 })

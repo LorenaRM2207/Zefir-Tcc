@@ -1,11 +1,25 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Image, Alert } from 'react-native'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Image, Alert, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
+import { cadastrar } from '../services/auth'
+import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 
-import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
+//validação do e-mail
+function emailValido(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e)
+}
+
+function formatarTelefone(t) {
+  const d = t.replace(/\D/g, '').slice(0, 11)
+  if (d.length <= 2) return d
+  if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
+}
 
 export default function Cadastro() {
 
@@ -18,33 +32,81 @@ export default function Cadastro() {
 
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [nomeUsuario, setNomeUsuario] = useState('')
+  const [carregando, setCarregando] = useState(false)
   const navigation = useNavigation()
 
-  if (!fontsLoaded) {
-    return null;
-  }
+
   async function realizarCadastro() {
+    const emailLimpo = email.trim()
+    const nomeLimpo = nomeUsuario.trim()
+    const telefoneNumeros = telefone.replace(/\D/g, '')
+
+    if (!emailLimpo || !telefoneNumeros || !senha || !nomeUsuario) {
+      console.log('FALHOU: campo vazio', { emailLimpo, telefoneNumeros, senha: !!senha, nomeLimpo })
+      Alert.alert('Atenção', 'Preencha todos os campos.')
+      return
+    }
+    if (!emailValido(emailLimpo)) {
+      console.log('FALHOU: e-mail inválido', emailLimpo)
+      Alert.alert('E-mail inválido', 'Digite um e-mail no formato nome@dominio.com.')
+      return
+    }
+    if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+      console.log('FALHOU: telefone', telefoneNumeros)
+      Alert.alert('Telefone inválido', 'Digite o telefone com DDD.')
+      return
+    }
+    if (senha.length < 6) {
+      Alert.alert('Senha fraca', 'A senha precisa ter pelo menos 6 caracteres.')
+      return
+    }
+    console.log('2. validações ok, criando conta...')
     try {
-    const cred = await createUserWithEmailAndPassword(auth, email.trim(), senha)
-    await sendEmailVerification(cred.user)
-    await signOut(auth) 
-    Alert.alert(
-      'Verifique seu e-mail',
-      'Enviamos um link de confirmação. Clique nele e depois faça login.',
-      [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
-    )
-  } catch (erro) {
-    if (erro.code === 'auth/email-already-in-use') {
-      Alert.alert('Erro', 'Esse e-mail já está cadastrado.')
-    } else if (erro.code === 'auth/invalid-email') {
-      Alert.alert('Erro', 'E-mail inválido.')
-    } else if (erro.code === 'auth/weak-password') {
-      Alert.alert('Erro', 'A senha precisa ter pelo menos 6 caracteres.')
-    } else {
-      Alert.alert('Erro', 'Não foi possível criar a conta.')
+      setCarregando(true)
+
+      const cred = await createUserWithEmailAndPassword(auth, emailLimpo, senha)
+      console.log('3. conta criada:', cred.user.uid)
+      await setDoc(doc(db, 'Usuario', cred.user.uid), {
+        id_usuario: Date.now(),
+        nome: nomeLimpo,
+        e_mail: emailLimpo,
+        telefone: telefoneNumeros,
+        criado_em: serverTimestamp(),
+      })
+      console.log('4. dados salvos')
+      await sendEmailVerification(cred.user)
+      await signOut(auth)
+
+      Alert.alert(
+        'Verifique seu e-mail',
+        'Enviamos um link de confirmação. Clique nele e depois faça login.',
+        [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+      )
+
+    } catch (erro) {
+      console.error('Erro no cadastro: ', erro)
+      if (erro.code === 'auth/email-already-in-use') {
+        Alert.alert('Erro', 'Esse e-mail já está cadastrado.')
+      } else if (erro.code === 'auth/invalid-email') {
+        Alert.alert('Erro', 'E-mail inválido.')
+      } else if (erro.code === 'auth/weak-password') {
+        Alert.alert('Erro', 'A senha precisa ter pelo menos 6 caracteres.')
+      } else {
+        Alert.alert('Erro', 'Não foi possível criar a conta.')
+      }
+    } finally {
+      setCarregando(false)
     }
   }
-}
+
+
+
+
+  if (!fontsLoaded) {
+    return null
+  }
 
   return (
     <View style={styles.screen}>
@@ -65,7 +127,7 @@ export default function Cadastro() {
           {/* Infomações */}
           <TextInput
             style={styles.boxTextInput}
-            placeholder='email'
+            placeholder='E-mail'
             placeholderTextColor="#6C757D"
             value={email}
             onChangeText={setEmail}
@@ -74,28 +136,33 @@ export default function Cadastro() {
           />
           <TextInput
             style={styles.boxTextInput}
-            placeholder='telefone'
+            placeholder='Nome usuário'
             placeholderTextColor="#6C757D"
+            value={nomeUsuario}
+            onChangeText={setNomeUsuario}
+          />
+          <TextInput
+            style={styles.boxTextInput}
+            placeholder='Telefone (com DDD)'
+            placeholderTextColor="#6C757D"
+            value={telefone}
+            onChangeText={(t) => setTelefone(formatarTelefone(t))}
+            keyboardType='phone-pad'
+            maxLength={15}
           />
           <TextInput
             style={styles.boxTextInput}
             placeholderTextColor="#6C757D"
-            placeholder='senha'
+            placeholder='Senha'
             value={senha}
             onChangeText={setSenha}
             secureTextEntry
           />
-          <TextInput
-            style={styles.boxTextInput}
-            placeholder='Confirmar Senha'
-            placeholderTextColor="#6C757D"
-          />
           {/* Botão - Logar */}
-          <TouchableOpacity
-            style={styles.bottom}
-            onPress={realizarCadastro}
-          >
-            <Text style={styles.textBottom}> Criar</Text>
+          <TouchableOpacity style={styles.bottom} onPress={realizarCadastro} disabled={carregando}>
+            {carregando
+              ? <ActivityIndicator color="white" />
+              : <Text style={styles.textBottom}> Criar</Text>}
           </TouchableOpacity>
           <Text style={styles.textCard1}>ou crie com</Text>
           <View style={styles.boxAling}>
