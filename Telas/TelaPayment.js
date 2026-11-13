@@ -22,7 +22,7 @@ function moeda(valor) {
   return 'R$ ' + valor.toFixed(2).replace('.', ',')
 }
 
-export default function TelaBuy() {
+export default function TelaPayment() {
 
   const navigation = useNavigation()
   const route = useRoute()
@@ -162,6 +162,16 @@ export default function TelaBuy() {
         valor: total,
         status: 'Concluída',
         forma_pagamento: `${cartao.bandeira} final ${cartao.final}`,
+      })
+      batch.set(doc(collection(db, 'Notificacao')), {
+        uid: usuario.uid,
+        id_pedido: idPedido,
+        titulo: 'Pedido realizado!',
+        texto: `Seu pedido de ${valorResultado} sensor(es) Zefir foi realizado com sucesso.`,
+        tipo_notificacao: 'pedido',
+        status: 'Informativo',
+        data_hora: serverTimestamp(),
+        lida: false,
       })
 
       await batch.commit()

@@ -1,5 +1,9 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView, ActivityIndicator, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { useState, useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -7,8 +11,23 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Feather from '@expo/vector-icons/Feather'
 
+function formatarDataHora(ts) {
+  if (!ts) return ''
+  const data = ts.toDate ? ts.toDate() : new Date(ts)
+  const dia = String(data.getDate()).padStart(2, '0')
+  const mes = String(data.getMonth() + 1).padStart(2, '0')
+  const ano = data.getFullYear()
+  const hora = String(data.getHours()).padStart(2, '0')
+  const min = String(data.getMinutes()).padStart(2, '0')
+  return `${dia}/${mes}/${ano} às ${hora}:${min}`
+}
 
 export default function Notifications() {
+
+  const navigation = useNavigation()
+  const [notificacoes, setNotificacoes] = useState([])
+  const [carregando, setCarregando] = useState(true)
+  const [uid, setUid] = useState(null)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -16,11 +35,113 @@ export default function Notifications() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
+  useEffect(() => {
+    let cancelarNotificacoes = null
+
+    const cancelarAuth = onAuthStateChanged(auth, (usuario) => {
+
+      if (!usuario) {
+        setUid(null)
+        setNotificacoes([])
+        setCarregando(false)
+        return
+      }
+
+      setUid(usuario.uid)
+      setCarregando(true)
+
+      const consulta = query(
+        collection(db, 'Notificacao'),
+        where('uid', '==', usuario.uid)
+      )
+
+      cancelarNotificacoes = onSnapshot(
+        consulta,
+        (snapshot) => {
+
+          const lista = snapshot.docs.map((documento) => ({
+            id: documento.id,
+            ...documento.data()
+          }))
+
+          lista.sort((a, b) => {
+            const dataA = a.data_hora?.toDate
+              ? a.data_hora.toDate().getTime()
+              : new Date(a.data_hora).getTime()
+
+            const dataB = b.data_hora?.toDate
+              ? b.data_hora.toDate().getTime()
+              : new Date(b.data_hora).getTime()
+
+            return dataB - dataA
+          })
+
+          setNotificacoes(lista)
+          setCarregando(false)
+        },
+        (erro) => {
+          console.error('Erro ao buscar notificações:', erro)
+          setCarregando(false)
+        }
+      )
+    })
+
+    return () => {
+      cancelarAuth()
+      if (cancelarNotificacoes) {
+        cancelarNotificacoes()
+      }
+    }
+  }, [])
+  function formatarDataHora(data) {
+    if (!data) return ''
+
+    const dataConvertida = data.toDate
+      ? data.toDate()
+      : new Date(data)
+
+    if (isNaN(dataConvertida.getTime())) return ''
+
+    return dataConvertida.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+  async function marcarLida(id) {
+    try {
+      await updateDoc(
+        doc(db, 'Notificacao', id),
+        {
+          lida: true
+        }
+      )
+    } catch (erro) {
+      console.error('Erro ao marcar notificação como lida:', erro)
+      Alert.alert('Erro', 'Não foi possível atualizar a notificação.')
+    }
+  }
+  async function limparNotificacoes() {
+    try {
+      await Promise.all(
+        notificacoes.map((item) =>
+          deleteDoc(doc(db, 'Notificacao', item.id))
+        )
+      )
+
+      console.log('Notificações apagadas!')
+    } catch (erro) {
+      console.error('Erro ao limpar notificações:', erro)
+      alert('Não foi possível limpar as notificações.')
+    }
+  }
 
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
+
   return (
     //View principal
     <View style={styles.screen}>
@@ -30,55 +151,93 @@ export default function Notifications() {
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaSuporte')}
           >
-          <Feather name="message-square" size={35} color="black" />
+            <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Notificação</Text>
           <TouchableOpacity
             onPress={() => navigation.navigate('Profile')}
           >
-          <Image
-            source={require('../assets/Avatar.png')}
-            style={styles.imageHeader}
-          />
+            <Image
+              source={require('../assets/Avatar.png')}
+              style={styles.imageHeader}
+            />
           </TouchableOpacity>
         </View>
       </View>
-
-      {/* Box Notification - Vazamento de gás */}
-      <View style={styles.container}>
-        <View style={styles.boxNotification}>
-          
-            <Text style={styles.textNotification}> Foi detectado gás no ambiente: Cozinha da hamburgueria</Text>
-          
-            <Text style={styles.text2Notification}>Caso não esteja cozinhando, existe a possibilidade de um pequeno vazamento de gás. Mantenha o cuidado e saia do local até a situação se estabilizar.</Text>
-            <EvilIcons name="exclamation" size={35} color="red" />
-    
-        </View>
-      </View>
-      {/* Box Notification - Umidade do ar */}
-      <View style={styles.container}>
-        <View style={styles.box2Notification}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal:20}}>
-            <EvilIcons name="exclamation" size={35} color="red" />
-            <Text style={styles.textNotification}> Umidade do ar abaixo de 40% (ar seco):</Text>
+      <ScrollView>
+        {notificacoes.length > 0 && (
+          <View style={styles.containerLimpar}>
+            <TouchableOpacity onPress={limparNotificacoes}>
+              <Text style={styles.textLimpar}>Limpar notificações</Text>
+            </TouchableOpacity>
           </View>
-          <View>
-            <Text style={styles.text2Notification}>Provoca ressecamento das mucosas e da pele, sangramento nasal, irritação nos olhos e agravamento de alergias. </Text>
+        )}
+        {carregando ? (
+          <ActivityIndicator
+            size="large"
+            color="#071739"
+            style={{ marginTop: 50 }}
+          />
+        ) : notificacoes.length === 0 ? (
+          <View style={[styles.container, { marginTop: 40 }]}>
+            <Feather name="bell-off" size={55} color="#A4B5C4" />
+            <Text style={styles.textNotification}>
+              Nenhuma notificação por enquanto!
+            </Text>
+            <Text style={styles.text2Notification}>
+              Quando houver novidades sobre seu sensor, pedidos ou pagamentos,
+              elas aparecerão aqui.
+            </Text>
           </View>
-        </View>
-      </View>
-      {/* Box Notification - Umidade do ar - LIda*/}
-      <View style={styles.container}>
-        <View style={[styles.box2Notification, {backgroundColor: 'rgba(217, 217, 217, 0.53)'}]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal:20}}>
-            <EvilIcons name="exclamation" size={35} color="gray" />
-            <Text style={[styles.textNotification, {color:'gray'}]}> Umidade do ar abaixo de 20% (ar seco):</Text>
-          </View>
-          <View>
-            <Text style={[styles.text2Notification, {color:'gray'}]}>Provoca ressecamento das mucosas e da pele, sangramento nasal, irritação nos olhos e agravamento de alergias. </Text>
-          </View>
-        </View>
-      </View>
+        ) : (
+          notificacoes.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              activeOpacity={0.8}
+              onPress={() => {
+                if (!item.lida) {
+                  marcarLida(item.id)
+                }
+              }}
+              style={styles.container}
+            >
+              <View
+                style={[
+                  styles.boxNotification,
+                  item.lida && styles.boxLida
+                ]}
+              >
+                <View style={styles.linhaNotificacao}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.textNotification}>
+                      {item.titulo || 'Notificação'}
+                    </Text>
+                    <Text style={styles.text2Notification}>
+                      {item.texto || 'Você recebeu uma nova notificação.'}
+                    </Text>
+                    <Text style={styles.dataHora}>
+                      {formatarDataHora(item.data_hora)}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'center' }}>
+                    <EvilIcons
+                      name="exclamation"
+                      size={35}
+                      color={item.lida ? 'gray' : 'red'}
+                    />
+                    {!item.lida && (
+                      <View style={styles.pontoNaoLida} />
+                    )}
+                  </View>
+                </View>
+                <Text style={styles.textStatus}>
+                  {item.lida ? 'Lida' : 'Não lida'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
+      </ScrollView>
 
 
 
@@ -106,8 +265,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '90%',
     justifyContent: 'center',
-    marginTop: 50, 
-    marginHorizontal:10,
+    marginTop: 50,
+    marginHorizontal: 10,
     paddingHorizontal: 10
   },
   textHeader: {
@@ -150,7 +309,7 @@ const styles = StyleSheet.create({
     fontSize: 21,
     letterSpacing: 1,
     lineHeight: 25,
-    textAlign: 'center', 
+    textAlign: 'center',
     marginVertical: 5
   },
   text2Notification: {
@@ -159,7 +318,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     lineHeight: 20,
     textAlign: 'center'
-
   },
   text3Notification: {
     fontFamily: 'Manrope',
@@ -177,5 +335,45 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 10,
   },
+  boxLida: {
+    backgroundColor: 'rgba(217, 217, 217, 0.53)',
+  },
+  linhaNotificacao: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dataHora: {
+    fontFamily: 'Manrope',
+    fontSize: 13,
+    color: '#6C7072',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  textStatus: {
+    fontFamily: 'ManropeSemiBold',
+    fontSize: 12,
+    color: '#6C7072',
+    textAlign: 'right',
+    marginTop: 8,
+  },
+  pontoNaoLida: {
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+    backgroundColor: 'red',
+    marginTop: 2,
+  },
+  containerLimpar: {
+    width: '90%',
+    alignSelf: 'center',
+    alignItems: 'flex-end',
+    marginVertical: 10,
+  },
+  textLimpar: {
+    fontFamily: 'ManropeSemiBold',
+    fontSize: 14,
+    color: '#D64545',
+  },
+
 
 })
