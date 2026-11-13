@@ -40,7 +40,10 @@ export default function Security() {
       </View>
       {/* Nome*/}
       <View style={styles.container}>
-        <View style={styles.boxRooms}>
+        <TouchableOpacity 
+        style={styles.boxRooms}
+        onPress={() => navigation.navigate('RecuperarSenha')}
+        >
           <View style={styles.columnsRow}>
             {/* Icone */}
             <View style={{ paddingRight: 30, paddingLeft: 20 }}>
@@ -52,7 +55,7 @@ export default function Security() {
               <Text style={styles.textInformation2}>Última alteração: 15/09/2026</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       {/* E-mail*/}
       <View style={styles.container}>

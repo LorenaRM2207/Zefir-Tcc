@@ -96,7 +96,7 @@ export default function RecuperarSenha() {
         )}
         {/* Cabeçalho */}
         <View style={{ alignSelf: 'center', justifyContent: 'flex-start', marginTop: 90, marginBottom: 130 }}>
-          <Text style={styles.textPrincipal}>Recuperar Senha</Text>
+          <Text style={styles.textPrincipal}>Alterar senha</Text>
         </View>
         {/* Card */}
         <View style={styles.box1}>
@@ -105,11 +105,11 @@ export default function RecuperarSenha() {
             <View style={{ flexDirection: 'row', alignItems: 'center', width: '90%', }}>
               <TouchableOpacity
                 style={{ alignSelf: 'flex-start', marginRight: 22 }}
-                onPress={() => navigation.navigate('Login')}
+                onPress={() => navigation.goBack()}
               >
                 <MaterialIcons name="arrow-back-ios-new" size={24} color="white" />
               </TouchableOpacity>
-              <Text style={styles.textBox1}>Recuperar Senha</Text>
+              <Text style={styles.textBox1}>Recuperar/Alterar Senha</Text>
             </View>
             <View style={styles.line}></View>
           </View>
@@ -150,9 +150,6 @@ export default function RecuperarSenha() {
             </Text>
           )}
 
-          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.textVoltar}>Voltar ao login</Text>
-          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>

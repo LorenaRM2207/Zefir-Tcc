@@ -115,7 +115,7 @@ export default function TelaAddCard() {
     try {
       await addDoc(collection(db, 'Forma_pagamento'), dadosParaSalvar)
       console.log('4. salvou!')
-      navigation.navigate('Wallet')
+      navigation.goBack()
     } catch (erro) {
       console.error('Erro ao salvar cartão: ', erro)
       Alert.alert('Erro', 'Não foi possível salvar o cartão.')
