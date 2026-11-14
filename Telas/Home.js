@@ -1,6 +1,8 @@
 import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
+import { db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -9,16 +11,15 @@ import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
 
-
+const LIMITE_GAS_PPM = 200
+const MINUTOS_CONECTADO = 10
 
 export default function Home() {
 
   //Tela sem conexão/sensor conectado
   const [modoAtivo, setModoAtivo] = useState(true)
-  function alternarFuncao() {
-    setModoAtivo(!modoAtivo)
-  }
-
+  const [leitura, setLeitura] = useState(null)
+  const navigation = useNavigation()
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -26,130 +27,149 @@ export default function Home() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
-  const navigation = useNavigation()
+  function alternarFuncao() {
+    setModoAtivo(!modoAtivo)
+  }
+  useEffect(() => {
+    const q = query(collection(db, 'Leitura_sensor'), orderBy('data_hora', 'desc'), limit(1))
+    const cancelar = onSnapshot(
+      q,
+      (snapshot) => {
+        setLeitura(snapshot.docs.length > 0 ? snapshot.docs[0].data() : null)
+      },
+      (erro) => console.error('Erro ao ler sensor: ', erro)
+    )
+    return cancelar
+  }, [])
+  const dataLeitura = leitura?.data_hora?.toDate ? leitura.data_hora.toDate() : null
+  const conectado = !!dataLeitura && (Date.now() - dataLeitura.getTime()) / 60000 <= MINUTOS_CONECTADO
+  const gasAlto = !!leitura && Number(leitura.ppm_gas) > LIMITE_GAS_PPM
+  const horaLeitura = dataLeitura
+    ? `${String(dataLeitura.getHours()).padStart(2, '0')}:${String(dataLeitura.getMinutes()).padStart(2, '0')}`
+    : ''
 
   if (!fontsLoaded) {
     return null
   }
-  
+
   return (
 
     //View principal
     <View style={styles.screen}>
       {modoAtivo ? (
         <>
-        {/* Cabeçalho*/}
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('TelaSuporte')}
-          >
-          <Feather name="message-square" size={35} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.textHeader}>Home</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-          <Image
-            source={require('../assets/Avatar.png')}
-            style={styles.imageHeader}
-          />
-          </TouchableOpacity>
-        </View>
-      
-      </View>
-      <ScrollView>
-          <View style={styles.logoContainer}>
-            <View style={styles.logoBox}>
-              <Image
-                source={require('../assets/Logo.png')}
-                style={styles.image}
-              />
-              <View style={styles.boxSensor}>
-                <TouchableOpacity
-                  onPress={alternarFuncao}
-                >
-                  <Text style={styles.textSensor}> Conectar Sensor</Text>
-                </TouchableOpacity>
-              </View>
+          {/* Cabeçalho*/}
+          <View style={styles.container}>
+            <View style={styles.header}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('TelaSuporte')}
+              >
+                <Feather name="message-square" size={35} color="black" />
+              </TouchableOpacity>
+              <Text style={styles.textHeader}>Home</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('Profile')}
+              >
+                <Image
+                  source={require('../assets/Avatar.png')}
+                  style={styles.imageHeader}
+                />
+              </TouchableOpacity>
             </View>
+
           </View>
-          {/* Box Sensor Configurações */}
-          <View style={styles.configurationContainer}>
-            <View style={styles.boxSensor2}>
-              <View style={styles.columnsRow}>
-
-                {/* Box Sensor Configurações - Coluna 1 */}
-                <View style={{ alignItems: 'flex-start' }}>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects}>
-                      <Entypo name="link" size={27} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> Desconectado</Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects}>
-                      <Feather name="lock" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> - </Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects}>
-                      <Feather name="droplet" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> - </Text>
-                  </View>
-                </View>
-
-                {/* Box Sensor Configurações - Coluna 2 */}
-                <View style={{ alignItems: 'flex-start' }}>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects}>
-                      <Feather name="battery" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> - </Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects}>
-                      <Feather name="wind" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> - </Text>
-                  </View>
-                  <View style={[styles.boxConects3,{width:'78%'}]}>
-                    <Feather name="power" size={20} color="#D64545" />
-                    <Text style={[styles.textConfiguration,{fontSize: 15}]}> Desligar sensor</Text>
-                  </View>
+          <ScrollView>
+            <View style={styles.logoContainer}>
+              <View style={styles.logoBox}>
+                <Image
+                  source={require('../assets/Logo.png')}
+                  style={styles.image}
+                />
+                <View style={styles.boxSensor}>
+                  <TouchableOpacity
+                    onPress={alternarFuncao}
+                  >
+                    <Text style={styles.textSensor}> Conectar Sensor</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             </View>
-          </View>
+            {/* Box Sensor Configurações */}
+            <View style={styles.configurationContainer}>
+              <View style={styles.boxSensor2}>
+                <View style={styles.columnsRow}>
+
+                  {/* Box Sensor Configurações - Coluna 1 */}
+                  <View style={{ alignItems: 'flex-start' }}>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects}>
+                        <Entypo name="link" size={27} color="black" />
+                      </View>
+                      <Text style={styles.textConfiguration}> Desconectado</Text>
+                    </View>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects}>
+                        <Feather name="lock" size={25} color="black" />
+                      </View>
+                      <Text style={styles.textConfiguration}> - </Text>
+                    </View>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects}>
+                        <Feather name="droplet" size={25} color="black" />
+                      </View>
+                      <Text style={styles.textConfiguration}> - </Text>
+                    </View>
+                  </View>
+
+                  {/* Box Sensor Configurações - Coluna 2 */}
+                  <View style={{ alignItems: 'flex-start' }}>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects}>
+                        <Feather name="battery" size={25} color="black" />
+                      </View>
+                      <Text style={styles.textConfiguration}> - </Text>
+                    </View>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects}>
+                        <Feather name="wind" size={25} color="black" />
+                      </View>
+                      <Text style={styles.textConfiguration}> - </Text>
+                    </View>
+                    <View style={[styles.boxConects3, { width: '78%' }]}>
+                      <Feather name="power" size={20} color="#D64545" />
+                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
           </ScrollView>
 
         </>
       ) : (
         <>
           {/* Cabeçalho*/}
-      <ScrollView>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('TelaSuporte')}
-          >
-          <Feather name="message-square" size={35} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.textHeader}>Home</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-          <Image
-            source={require('../assets/Avatar.png')}
-            style={styles.imageHeader}
-          />
-          </TouchableOpacity>
-        </View>
-      </View>
-          <View style={styles.container2}>
-            <Image
+          <ScrollView>
+            <View style={styles.container}>
+              <View style={styles.header}>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('TelaSuporte')}
+                >
+                  <Feather name="message-square" size={35} color="black" />
+                </TouchableOpacity>
+                <Text style={styles.textHeader}>Home</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Profile')}
+                >
+                  <Image
+                    source={require('../assets/Avatar.png')}
+                    style={styles.imageHeader}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.container2}>
+              <Image
                 source={require('../assets/presentation3.png')}
                 style={styles.image2}
               />
@@ -160,102 +180,109 @@ export default function Home() {
                   <Text style={styles.textRooms}> Verificar ambientes</Text>
                 </TouchableOpacity>
               </View>
-          </View>
-          {/* Bottom compra sensor */}
-          <View style={styles.container}>
-            <TouchableOpacity
-             style={styles.bottomBuy}
-             onPress={() => navigation.navigate('TelaBuy')}
-            >
-              <Text style={styles.textRooms}>Compre um novo sensor</Text>
-            </TouchableOpacity>
-          </View>
-          {/* Box Sensor Configurações */}
-          <View style={styles.container}>
-            <View style={styles.boxSensor2}>
-              <View style={styles.columnsRow}>
-
-                {/* Box Sensor Configurações - Coluna 1 */}
-                <View style={{ alignItems: 'flex-start' }}>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects4}>
-                      <Entypo name="link" size={27} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> Conectado</Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects4}>
-                      <Feather name="lock" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> Seguro </Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects5}>
-                      <Feather name="droplet" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> 40% </Text>
-                  </View>
-                </View>
-
-                {/* Box Sensor Configurações - Coluna 2 */}
-                <View style={{ alignItems: 'flex-start' }}>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects4}>
-                      <Feather name="battery" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> 95% </Text>
-                  </View>
-                  <View style={styles.alignConfigurations}>
-                    <View style={styles.boxConects5}>
-                      <Feather name="wind" size={25} color="black" />
-                    </View>
-                    <Text style={styles.textConfiguration}> 2% </Text>
-                  </View>
-                  <View style={styles.boxConects3}>
-                    <Feather name="power" size={20} color="#D64545" />
-                    <Text style={styles.textConfiguration}> Desligar sensor</Text>
-                  </View>
-                </View>
-              </View>
             </View>
-          </View>
-          {/* Box Notification - Vazamento de gás */}
-          <View style={styles.container}>
-            <View style={styles.boxNotification}>
-              <View style={{ flexDirection: 'row', alignItems: 'center'}}>
-                <EvilIcons name="exclamation" size={35} color="red" />
-                <Text style={styles.textNotification }> Houve um vazamento de gás</Text>
-              </View>
-              <View>
-                <Text style={styles.text2Notification}>Mas não se preocupe ele já foi contido</Text>
-              </View>
+            {/* Bottom compra sensor */}
+            <View style={styles.container}>
               <TouchableOpacity
-                style={styles.bottom2}
-                onPress={() => navigation.navigate('Notifications')}
+                style={styles.bottomBuy}
+                onPress={() => navigation.navigate('TelaBuy')}
               >
-                <Text style={styles.text3Notification}> Ver mais </Text>
+                <Text style={styles.textRooms}>Compre um novo sensor</Text>
               </TouchableOpacity>
             </View>
-          </View>
-          {/* Box Notification - Umidade do ar */}
-          <View style={styles.container}>
-            <View style={styles.box2Notification}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <EvilIcons name="exclamation" size={35} color="#463f3f" />
-                <Text style={styles.textNotification}> Ligue seu umidificador </Text>
+            {/* Box Sensor Configurações */}
+            <View style={styles.container}>
+              <View style={styles.boxSensor2}>
+                <View style={styles.columnsRow}>
+
+                  {/* Coluna 1 */}
+                  <View style={{ alignItems: 'flex-start' }}>
+                    <View style={styles.alignConfigurations}>
+                      <View style={[styles.boxConects4, !conectado && { backgroundColor: '#D64545' }]}>
+                        <Entypo name="link" size={22} color="black" />
+                      </View>
+                      <Text style={styles.text2Notification}>{conectado ? ' Conectado' : ' Desconectado'}</Text>
+                    </View>
+
+                    <View style={styles.alignConfigurations}>
+                      <View style={[styles.boxConects4, gasAlto && { backgroundColor: '#D64545' }]}>
+                        <Feather name="lock" size={22} color="black" />
+                      </View>
+                      <Text style={styles.text2Notification}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
+                    </View>
+
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects5}>
+                        <Feather name="droplet" size={22} color="black" />
+                      </View>
+                      <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
+                    </View>
+                  </View>
+
+                  {/* Coluna 2 */}
+                  <View style={{ alignItems: 'flex-start' }}>
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects4}>
+                        <Feather name="battery" size={22} color="black" />
+                      </View>
+                      <Text style={styles.text2Notification}>{leitura?.bateria != null ? ` ${leitura.bateria}%` : ' --'}</Text>
+                    </View>
+
+                    <View style={styles.alignConfigurations}>
+                      <View style={styles.boxConects5}>
+                        <Feather name="wind" size={22} color="black" />
+                      </View>
+                      <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
+                    </View>
+
+                    <View style={{ width: '110%' }}>
+                      <View style={styles.boxConects3}>
+                        <Feather name="power" size={20} color="#D64545" />
+                        <Text style={styles.text2Notification}> Desligar sensor</Text>
+                      </View>
+                    </View>
+                  </View>
+
+                </View>
               </View>
-              <View>
-                <Text style={styles.text2Notification}>O ar pode estar um pouco seco, a porcentagem ideal é de 50% a 60% </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.bottom2}
-                onPress={() => navigation.navigate('Notifications')}
-              >
-                <Text style={styles.text3Notification}> Ver mais </Text>
-              </TouchableOpacity>
             </View>
-          </View>
-          <View style={{ height: 100 }} />
+            {/* Box Notification - Vazamento de gás */}
+            <View style={styles.container}>
+              <View style={styles.boxNotification}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <EvilIcons name="exclamation" size={35} color="red" />
+                  <Text style={styles.textNotification}> Houve um vazamento de gás</Text>
+                </View>
+                <View>
+                  <Text style={styles.text2Notification}>Mas não se preocupe ele já foi contido</Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.bottom2}
+                  onPress={() => navigation.navigate('Notifications')}
+                >
+                  <Text style={styles.text3Notification}> Ver mais </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            {/* Box Notification - Umidade do ar */}
+            <View style={styles.container}>
+              <View style={styles.box2Notification}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <EvilIcons name="exclamation" size={35} color="#463f3f" />
+                  <Text style={styles.textNotification}> Ligue seu umidificador </Text>
+                </View>
+                <View>
+                  <Text style={styles.text2Notification}>O ar pode estar um pouco seco, a porcentagem ideal é de 50% a 60% </Text>
+                </View>
+                <TouchableOpacity
+                  style={styles.bottom2}
+                  onPress={() => navigation.navigate('Notifications')}
+                >
+                  <Text style={styles.text3Notification}> Ver mais </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={{ height: 100 }} />
           </ScrollView>
         </>
       )}
@@ -266,13 +293,13 @@ export default function Home() {
 
 const styles = StyleSheet.create({
 
-   //Cabeçalho
-   header: {
+  //Cabeçalho
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '90%',
     justifyContent: 'center',
-    marginTop: 50, 
+    marginTop: 50,
     paddingHorizontal: 10
   },
   textHeader: {
@@ -287,7 +314,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
-  
+
   //Sensor desconctado
   logoBox: {
     alignItems: 'center',
@@ -405,7 +432,7 @@ const styles = StyleSheet.create({
   },
   container2: {
     alignItems: 'center',
-    margin: 10, 
+    margin: 10,
     position: 'relative',
   },
   //Ambientes
@@ -481,7 +508,7 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeBold',
     fontSize: 19,
     letterSpacing: 1,
-    textAlign:'center'
+    textAlign: 'center'
   },
   text2Notification: {
     fontFamily: 'Manrope',

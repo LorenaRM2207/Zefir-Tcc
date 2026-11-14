@@ -1,5 +1,9 @@
 import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { useState, useEffect } from 'react'
+import { onAuthStateChanged } from 'firebase/auth'
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -10,9 +14,13 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 
-
+const MODOS = ['Vibrar', 'Sonoro', 'Mudo']
 
 export default function TelaConfigAlert() {
+  const navigation = useNavigation()
+  const [modo, setModo] = useState(0)
+  const [desativado, setDesativado] = useState(false)
+  const [carregando, setCarregando] = useState(true)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -20,11 +28,62 @@ export default function TelaConfigAlert() {
     ManropeSemiBold: Manrope_600SemiBold,
     ManropeBold: Manrope_700Bold,
   })
+  useEffect(() => {
+    const cancelarAuth = onAuthStateChanged(auth, async (usuario) => {
+      if (!usuario) {
+        setCarregando(false)
+        return
+      }
+      try {
+        const snap = await getDoc(doc(db, 'Configuracoes', usuario.uid))
+        if (snap.exists()) {
+          const d = snap.data()
+          const posicao = MODOS.indexOf(d.alertas)
+          setModo(posicao >= 0 ? posicao : 0)
+          setDesativado(d.notificacoes === 'Desativadas')
+        }
+      } catch (erro) {
+        console.error('Erro ao ler configurações: ', erro)
+      } finally {
+        setCarregando(false)
+      }
+    })
+    return cancelarAuth
+  }, [])
+
+  async function salvar(campos) {
+    const usuario = auth.currentUser
+    if (!usuario) return
+    try {
+      await setDoc(
+        doc(db, 'Configuracoes', usuario.uid),
+        { ...campos, atualizado_em: serverTimestamp() },
+        { merge: true }
+      )
+    } catch (erro) {
+      console.error('Erro ao salvar configurações: ', erro)
+    }
+  }
+
+  function trocarModo() {
+    const proximo = (modo + 1) % MODOS.length
+    setModo(proximo)
+    salvar({ alertas: MODOS[proximo] })
+  }
+
+  function alternarDesativado() {
+    const novo = !desativado
+    setDesativado(novo)
+    salvar({ notificacoes: novo ? 'Desativadas' : 'Ativadas' })
+  }
 
   if (!fontsLoaded) {
     return null
   }
-  const navigation = useNavigation()
+  if (carregando) {
+    return <View style={styles.screen} />
+  }
+
   return (
     <View style={styles.screen}>
       {/* Cabeçalho*/}
@@ -46,9 +105,9 @@ export default function TelaConfigAlert() {
           </TouchableOpacity>
         </View>
       </View>
-        <View style={styles.container}>
-        <TouchableOpacity 
-          style={{flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10}}
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10 }}
           onPress={() => navigation.goBack()}
         >
           <MaterialIcons name="keyboard-arrow-left" size={30} color="black" />
@@ -57,34 +116,37 @@ export default function TelaConfigAlert() {
       </View>
       {/* Alertas*/}
       <View style={styles.container}>
-        <View style={styles.boxRooms}>
+        <TouchableOpacity style={styles.boxRooms} onPress={trocarModo}>
           <View style={styles.columnsRow}>
-            {/* Icone */}
             <View style={{ paddingRight: 30, paddingLeft: 20 }}>
-              <Ionicons name="notifications-outline" size={30} color="#6C7072" />
+              <Ionicons
+                name={modo === 0 ? 'phone-portrait-outline' : modo === 1 ? 'volume-high-outline' : 'volume-mute-outline'}
+                size={30}
+                color="#6C7072"
+              />
             </View>
-            {/* Texto */}
             <View>
               <Text style={styles.textInformation}>Alerta e notificações</Text>
-              <Text style={styles.textInformation2}>Vibrar</Text>
+              <Text style={styles.textInformation2}>{MODOS[modo]}</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       {/* Desativar*/}
       <View style={styles.container}>
-        <View style={styles.boxRooms}>
+        <TouchableOpacity
+          style={[styles.boxRooms, desativado && styles.boxSelecionada]}
+          onPress={alternarDesativado}
+        >
           <View style={styles.columnsRow}>
-            {/* Icone */}
             <View style={{ paddingRight: 30, paddingLeft: 20 }}>
-              <Ionicons name="notifications-off-outline" size={24} color="#6C7072"  />
+              <Ionicons name="notifications-off-outline" size={24} color={desativado ? '#0F0F0F' : '#6C7072'} />
             </View>
-            {/* Texto */}
             <View>
               <Text style={styles.textInformation}>Desativar notificações</Text>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       </View>
       {/* Volume*/}
       <View style={styles.container}>
@@ -179,7 +241,10 @@ const styles = StyleSheet.create({
     fontSize: 22,
     letterSpacing: 1,
     lineHeight: 20,
-    color: '#0F0F0F', 
+    color: '#0F0F0F',
+  },
+  boxSelecionada: {
+    backgroundColor: 'rgba(108, 114, 112, 0.6)',
   },
 
 })

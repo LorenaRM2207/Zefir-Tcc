@@ -2,7 +2,7 @@ import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView, ActivityIn
 import { useNavigation } from '@react-navigation/native'
 import { useState, useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, deleteDoc, writeBatch } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, doc, updateDoc, deleteDoc } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -11,15 +11,17 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Feather from '@expo/vector-icons/Feather'
 
-function formatarDataHora(ts) {
-  if (!ts) return ''
-  const data = ts.toDate ? ts.toDate() : new Date(ts)
-  const dia = String(data.getDate()).padStart(2, '0')
-  const mes = String(data.getMonth() + 1).padStart(2, '0')
-  const ano = data.getFullYear()
-  const hora = String(data.getHours()).padStart(2, '0')
-  const min = String(data.getMinutes()).padStart(2, '0')
-  return `${dia}/${mes}/${ano} às ${hora}:${min}`
+function estiloDoTipo(tipo, lida) {
+  if (lida) {
+    return { fundo: 'rgba(217, 217, 217, 0.53)', texto: 'gray', icone: 'gray', data: '#8A8F94' }
+  }
+  if (tipo === 'pedido' || tipo === 'pagamento') {
+    return { fundo: 'rgba(82, 130, 189, 0.53)', texto: '#0F0F0F', icone: '#0F0F0F', data: '#0F0F0F' }
+  }
+  if (tipo === 'umidade') {
+    return { fundo: '#D9D9D9', texto: '#0F0F0F', icone: 'red', data: '#0F0F0F' }
+  }
+  return { fundo: '#FFEAD0', texto: '#0F0F0F', icone: 'red', data: '#0F0F0F' }
 }
 
 export default function Notifications() {
@@ -134,7 +136,7 @@ export default function Notifications() {
       console.log('Notificações apagadas!')
     } catch (erro) {
       console.error('Erro ao limpar notificações:', erro)
-      alert('Não foi possível limpar as notificações.')
+      alert.alert('Não foi possível limpar as notificações.')
     }
   }
 
@@ -190,61 +192,44 @@ export default function Notifications() {
             </Text>
           </View>
         ) : (
-          notificacoes.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              activeOpacity={0.8}
-              onPress={() => {
-                if (!item.lida) {
-                  marcarLida(item.id)
-                }
-              }}
-              style={styles.container}
-            >
-              <View
-                style={[
-                  styles.boxNotification,
-                  item.lida && styles.boxLida
-                ]}
+          notificacoes.map((item) => {
+            const c = estiloDoTipo(item.tipo_notificacao, item.lida)
+            return (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (!item.lida) marcarLida(item.id)
+                }}
+                style={styles.container}
               >
-                <View style={styles.linhaNotificacao}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.textNotification}>
-                      {item.titulo || 'Notificação'}
-                    </Text>
-                    <Text style={styles.text2Notification}>
-                      {item.texto || 'Você recebeu uma nova notificação.'}
-                    </Text>
-                    <Text style={styles.dataHora}>
-                      {formatarDataHora(item.data_hora)}
-                    </Text>
+                <View style={[styles.boxNotification, { backgroundColor: c.fundo }]}>
+                  <View style={styles.linhaNotificacao}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={[styles.textNotification, { color: c.texto }]}>
+                        {item.titulo || 'Notificação'}
+                      </Text>
+                      <Text style={[styles.text2Notification, { color: c.texto }]}>
+                        {item.texto || 'Você recebeu uma nova notificação.'}
+                      </Text>
+                      <Text style={[styles.dataHora, { color: c.data }]}>
+                        {formatarDataHora(item.data_hora)}
+                      </Text>
+                    </View>
+                    <View style={{ alignItems: 'center' }}>
+                      <EvilIcons name="exclamation" size={35} color={c.icone} />
+                      {!item.lida && <View style={styles.pontoNaoLida} />}
+                    </View>
                   </View>
-                  <View style={{ alignItems: 'center' }}>
-                    <EvilIcons
-                      name="exclamation"
-                      size={35}
-                      color={item.lida ? 'gray' : 'red'}
-                    />
-                    {!item.lida && (
-                      <View style={styles.pontoNaoLida} />
-                    )}
-                  </View>
+                  <Text style={[styles.textStatus, { color: c.texto }]}>
+                    {item.lida ? 'Lida' : 'Não lida'}
+                  </Text>
                 </View>
-                <Text style={styles.textStatus}>
-                  {item.lida ? 'Lida' : 'Não lida'}
-                </Text>
-              </View>
-            </TouchableOpacity>
-          ))
+              </TouchableOpacity>
+            )
+          })
         )}
       </ScrollView>
-
-
-
-
-
-
-
     </View>
   )
 }
@@ -296,13 +281,11 @@ const styles = StyleSheet.create({
   boxNotification: {
     backgroundColor: '#FFEAD0',
     width: '90%',
-    height: 250,
     borderRadius: 15,
     margin: 10,
     padding: 7,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 100
   },
   textNotification: {
     fontFamily: 'ManropeBold',
@@ -344,17 +327,15 @@ const styles = StyleSheet.create({
   },
   dataHora: {
     fontFamily: 'Manrope',
-    fontSize: 13,
-    color: '#6C7072',
+    fontSize: 15,
     marginTop: 10,
     textAlign: 'center',
   },
   textStatus: {
     fontFamily: 'ManropeSemiBold',
-    fontSize: 12,
-    color: '#6C7072',
-    textAlign: 'right',
-    marginTop: 8,
+    fontSize: 15,
+    textAlign: 'center',
+    marginTop: 3,
   },
   pontoNaoLida: {
     width: 9,
