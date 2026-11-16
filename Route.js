@@ -20,7 +20,6 @@ import Login from './TelasLogin/TelaLogin'
 import RecuperarSenha from './TelasLogin/TelaRecuperarSenha'
 import Rooms from './TelasRoom/Rooms'
 import Rooms2 from './TelasRoom/Rooms2'
-import Rooms3 from './TelasRoom/Rooms3'
 import NewRoom from './TelasRoom/NewRoom'
 import Personal from './TelasProfile/TelaPersonal'
 import Wallet from './TelasProfile/TelaWallet'
@@ -179,10 +178,6 @@ export default function Route() {
       <Stack.Screen
         name="Rooms2"
         component={Rooms2}
-      />
-      <Stack.Screen
-        name="Rooms3"
-        component={Rooms3}
       />
       <Stack.Screen
         name="NewRoom"

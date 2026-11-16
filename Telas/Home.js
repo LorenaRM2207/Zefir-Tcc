@@ -235,11 +235,11 @@ export default function Home() {
                       <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
                     </View>
 
-                    <View style={{ width: '110%' }}>
-                      <View style={styles.boxConects3}>
-                        <Feather name="power" size={20} color="#D64545" />
-                        <Text style={styles.text2Notification}> Desligar sensor</Text>
-                      </View>
+                    <View style={{ width: '100%' }}>
+                      <View style={[styles.boxConects3, { width: '78%' }]}>
+                      <Feather name="power" size={20} color="#D64545" />
+                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
+                    </View>
                     </View>
                   </View>
 
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '85%',
+    width: '75%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',

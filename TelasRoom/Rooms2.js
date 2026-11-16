@@ -133,10 +133,10 @@ export default function Rooms2() {
                 </View>
 
                 <View style={{ width: '110%' }}>
-                  <View style={styles.boxConects3}>
-                    <Feather name="power" size={18} color="#D64545" />
-                    <Text style={styles.text2Card1}> Desligar sensor</Text>
-                  </View>
+                  <View style={[styles.boxConects3, { width: '78%' }]}>
+                      <Feather name="power" size={20} color="#D64545" />
+                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
+                    </View>
                 </View>
               </View>
 
