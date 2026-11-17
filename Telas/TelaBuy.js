@@ -8,6 +8,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import AntDesign from '@expo/vector-icons/AntDesign'
 import Feather from '@expo/vector-icons/Feather'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 
 
@@ -69,14 +70,7 @@ export default function TelaBuy() {
               <Ionicons name="home-sharp" size={30} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Adquirir sensor</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
-            >
-              <Image
-                source={require('../assets/Avatar.png')}
-                style={styles.imageHeader}
-              />
-            </TouchableOpacity>
+            <AvatarPerfil/>
           </View>
         </View>
         <View style={styles.container}>
@@ -150,10 +144,6 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 30,
     textAlign: 'center'
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   image: {
     width: 200,

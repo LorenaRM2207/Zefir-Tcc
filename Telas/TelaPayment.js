@@ -13,6 +13,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 const PRECO_UNIDADE = 109.99
 const FRETE_FIXO = 19.9
@@ -205,14 +206,7 @@ export default function TelaPayment() {
               <Feather name="message-square" size={35} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Adquirir sensor</Text>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Profile')}
-            >
-              <Image
-                source={require('../assets/Avatar.png')}
-                style={styles.imageHeader}
-              />
-            </TouchableOpacity>
+            <AvatarPerfil/>
           </View>
         </View>
 
@@ -387,10 +381,6 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 10,
     textAlign: 'center'
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   image: {
     width: 100,

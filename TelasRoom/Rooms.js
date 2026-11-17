@@ -1,7 +1,7 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, ScrollView, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, TextInput, ScrollView, ActivityIndicator, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, query, where, onSnapshot } from 'firebase/firestore'
+import { collection, query, where, onSnapshot, deleteDoc, doc } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 import { useState, useEffect } from 'react'
 //fonte de aplicativo
@@ -10,6 +10,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 //icone
 import Feather from '@expo/vector-icons/Feather'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 
 export default function Rooms() {
@@ -18,6 +19,10 @@ export default function Rooms() {
   const [ambientes, setAmbientes] = useState([])
   const [busca, setBusca] = useState('')
   const [carregando, setCarregando] = useState(true)
+  const [modoExcluir, setModoExcluir] = useState(false)
+  const [alvo, setAlvo] = useState(null)
+  const [excluindo, setExcluindo] = useState(false)
+  const [erroExcluir, setErroExcluir] = useState('')
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -61,6 +66,20 @@ export default function Rooms() {
   const ambientesFiltrados = ambientes.filter((a) =>
     (a.nome_comodo || '').toLowerCase().includes(busca.trim().toLowerCase())
   )
+  async function confirmarExclusao() {
+    if (!alvo) return
+    try {
+      setExcluindo(true)
+      await deleteDoc(doc(db, 'Ambiente', alvo.id))
+      setAlvo(null)
+      setErroExcluir('')
+    } catch (erro) {
+      console.error('Erro ao excluir ambiente: ', erro)
+      setErroExcluir('Não foi possível excluir. Tente novamente.')
+    } finally {
+      setExcluindo(false)
+    }
+  }
 
   if (!fontsLoaded) {
     return null
@@ -77,14 +96,7 @@ export default function Rooms() {
             <Ionicons name="home-sharp" size={30} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Ambientes</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
+          <AvatarPerfil/>
         </View>
       </View>
       <ScrollView>
@@ -103,6 +115,15 @@ export default function Rooms() {
             </View>
           </View>
         </View>
+        {ambientes.length > 0 && (
+          <View style={styles.linhaExcluir}>
+            <TouchableOpacity onPress={() => setModoExcluir((atual) => !atual)}>
+              <Text style={[styles.textExcluir, modoExcluir && { color: '#071739' }]}>
+                {modoExcluir ? 'Concluir' : 'Excluir ambiente'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
         {carregando ? (
           <ActivityIndicator size="large" color="#071739" style={{ marginTop: 30 }} />
         ) : ambientes.length === 0 ? (
@@ -119,13 +140,27 @@ export default function Rooms() {
             <View key={a.id} style={styles.container}>
               <TouchableOpacity
                 style={styles.boxRooms}
-                onPress={() => navigation.navigate('Rooms2', { ambiente: a })}
+                activeOpacity={modoExcluir ? 1 : 0.2}
+                onPress={() => {
+                  if (!modoExcluir) navigation.navigate('Rooms2', { ambiente: a })
+                }}
               >
                 <Image
                   source={a.foto ? { uri: a.foto } : require('../assets/presentation3.png')}
                   style={styles.image}
                 />
                 <Text style={styles.textRooms} numberOfLines={2}>{a.nome_comodo}</Text>
+                {modoExcluir && (
+                  <TouchableOpacity
+                    style={styles.botaoLixeira}
+                    onPress={() => {
+                      setErroExcluir('')
+                      setAlvo(a)
+                    }}
+                  >
+                    <Feather name="trash-2" size={24} color="#D64545" />
+                  </TouchableOpacity>
+                )}
               </TouchableOpacity>
             </View>
           ))
@@ -141,6 +176,25 @@ export default function Rooms() {
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <Modal transparent animationType="fade" visible={!!alvo} onRequestClose={() => setAlvo(null)}>
+        <View style={styles.fundoModal}>
+          <View style={styles.caixaModal}>
+            <Text style={styles.textModalTitulo}>Excluir ambiente</Text>
+            <Text style={styles.textModal}>
+              Deseja excluir "{alvo?.nome_comodo}"? Essa ação não pode ser desfeita.
+            </Text>
+            {!!erroExcluir && <Text style={styles.textErroModal}>{erroExcluir}</Text>}
+            <View style={styles.botoesModal}>
+              <TouchableOpacity style={styles.botaoCancelar} onPress={() => setAlvo(null)} disabled={excluindo}>
+                <Text style={styles.textCancelar}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.botaoExcluir} onPress={confirmarExclusao} disabled={excluindo}>
+                {excluindo ? <ActivityIndicator color="white" /> : <Text style={styles.textExcluirBtn}>Excluir</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
     </View>
   )
@@ -172,10 +226,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#0F0F0F',
     marginHorizontal: 50
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   //Box Search
   boxSearch: {
@@ -233,10 +283,90 @@ const styles = StyleSheet.create({
     color: '#0F0F0F'
   },
   textVazio: {
-  fontFamily: 'Manrope',
-  fontSize: 17,
-  color: '#6C757D',
-  textAlign: 'center',
-  marginTop: 10,
-},
+    fontFamily: 'Manrope',
+    fontSize: 17,
+    color: '#6C757D',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  linhaExcluir: {
+    width: '90%',
+    alignSelf: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 5,
+  },
+  textExcluir: {
+    fontFamily: 'ManropeBold',
+    fontSize: 14,
+    color: '#D64545',
+  },
+  botaoLixeira: {
+    position: 'absolute',
+    right: 15,
+    top: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    paddingLeft: 10,
+  },
+  fundoModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  caixaModal: {
+    backgroundColor: 'white',
+    width: '100%',
+    borderRadius: 20,
+    padding: 20,
+    gap: 12,
+  },
+  textModalTitulo: {
+    fontFamily: 'ManropeBold',
+    fontSize: 20, color: '#0F0F0F'
+  },
+  textModal: {
+    fontFamily: 'Manrope',
+    fontSize: 16,
+    color: '#0F0F0F',
+    lineHeight: 22
+  },
+  textErroModal: {
+    fontFamily: 'Manrope',
+    fontSize: 14,
+    color: '#D64545'
+  },
+  botoesModal: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 6
+  },
+  botaoCancelar: {
+    paddingHorizontal: 20,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(164, 181, 196, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textCancelar: {
+    fontFamily: 'ManropeBold',
+    fontSize: 16,
+    color: '#0F0F0F'
+  },
+  botaoExcluir: {
+    paddingHorizontal: 20,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#D64545',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textExcluirBtn: {
+    fontFamily: 'ManropeBold',
+    fontSize: 16,
+    color: 'white'
+  },
 })

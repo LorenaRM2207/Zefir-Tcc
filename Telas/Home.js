@@ -10,6 +10,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 const LIMITE_GAS_PPM = 200
 const MINUTOS_CONECTADO = 10
@@ -67,14 +68,7 @@ export default function Home() {
                 <Feather name="message-square" size={35} color="black" />
               </TouchableOpacity>
               <Text style={styles.textHeader}>Home</Text>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('Profile')}
-              >
-                <Image
-                  source={require('../assets/Avatar.png')}
-                  style={styles.imageHeader}
-                />
-              </TouchableOpacity>
+              <AvatarPerfil/>
             </View>
 
           </View>
@@ -158,14 +152,7 @@ export default function Home() {
                   <Feather name="message-square" size={35} color="black" />
                 </TouchableOpacity>
                 <Text style={styles.textHeader}>Home</Text>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('Profile')}
-                >
-                  <Image
-                    source={require('../assets/Avatar.png')}
-                    style={styles.imageHeader}
-                  />
-                </TouchableOpacity>
+                <AvatarPerfil/>
               </View>
             </View>
             <View style={styles.container2}>
@@ -310,11 +297,6 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 90
   },
-  imageHeader: {
-    width: 50,
-    height: 50,
-  },
-
   //Sensor desconctado
   logoBox: {
     alignItems: 'center',

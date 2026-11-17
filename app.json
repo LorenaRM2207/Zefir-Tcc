@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "BancoDeDados-Zefir",
+    "name": "Zefir",
     "slug": "zefir-tcc",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/Logo.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/Logo.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.lorenarmarinho.zefirtcc"
@@ -25,7 +25,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/splash-icon.png",
+          "image": "./assets/Logo.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }

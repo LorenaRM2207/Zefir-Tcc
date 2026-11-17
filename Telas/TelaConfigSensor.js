@@ -9,8 +9,6 @@ import Feather from '@expo/vector-icons/Feather'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
-
-
 export default function TelaConfigSensor() {
 
   const [fontsLoaded] = useFonts({
@@ -26,25 +24,6 @@ export default function TelaConfigSensor() {
   const navigation = useNavigation()
   return (
     <View style={styles.screen}>
-      {/* Cabeçalho*/}
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('TelaSuporte')}
-          >
-            <Feather name="message-square" size={35} color="black" />
-          </TouchableOpacity>
-          <Text style={styles.textHeader}>Notificação</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
-        </View>
-      </View>
       <View style={styles.container}>
         <TouchableOpacity
           style={{ flexDirection: 'row', marginTop: 120, alignItems: 'center', marginBottom: 10 }}
@@ -156,10 +135,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: '#0F0F0F',
     marginHorizontal: 60
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   //Caixas de informações
   boxRooms: {

@@ -10,6 +10,7 @@ import Profile from './Telas/Profile'
 import Notifications from './Telas/Notifications'
 import Calendar from './Telas/Calendar'
 import Home from './Telas/Home'
+import TelaSplash from './TelasWelcome/TelaSplash'
 import Presentation from './TelasWelcome/Presentation'
 import Presentation2 from './TelasWelcome/Presentation2'
 import Presentation3 from './TelasWelcome/Presentation3'
@@ -108,12 +109,16 @@ export default function Route() {
   return (
     //Tela de inicio 
     <Stack.Navigator
-      initialRouteName="Presentation"
+      initialRouteName="TelaSplash"
       screenOptions={{
         headerShown: false,
       }}
     >
       {/* Telas Welcome*/}
+      <Stack.Screen
+        name="TelaSplash"
+        component={TelaSplash}
+      />
       <Stack.Screen
         name="Presentation"
         component={Presentation}

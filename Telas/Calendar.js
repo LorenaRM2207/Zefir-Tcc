@@ -11,6 +11,7 @@ import { db } from '../config/firebase'
 import { collection, getDocs } from 'firebase/firestore'
 //icones
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 
 const mesesParaNumero = {
@@ -255,14 +256,7 @@ export default function Calendar() {
             <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Calendário</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
+          <AvatarPerfil/>
         </View>
       </View>
       {/* Abas */}
@@ -428,10 +422,6 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     color: '#0F0F0F',
     marginHorizontal: 50
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   boxAbas: {
     flexDirection: 'row',

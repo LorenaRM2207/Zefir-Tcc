@@ -10,6 +10,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 //icones
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 function estiloDoTipo(tipo, lida) {
   if (lida) {
@@ -156,14 +157,7 @@ export default function Notifications() {
             <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Notificação</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
+          <AvatarPerfil/>
         </View>
       </View>
       <ScrollView>
@@ -261,10 +255,6 @@ const styles = StyleSheet.create({
     lineHeight: 36,
     color: '#0F0F0F',
     marginHorizontal: 50
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   //Style Box Notification - Umidade do ar
   box2Notification: {

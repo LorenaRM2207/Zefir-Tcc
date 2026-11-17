@@ -10,6 +10,8 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
+
 
 
 export default function NewRoom() {
@@ -114,14 +116,7 @@ export default function NewRoom() {
             <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Ambientes</Text>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Profile')}
-          >
-            <Image
-              source={require('../assets/Avatar.png')}
-              style={styles.imageHeader}
-            />
-          </TouchableOpacity>
+          <AvatarPerfil/>
         </View>
       </View>
       <ScrollView>
@@ -156,16 +151,26 @@ export default function NewRoom() {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={[styles.bottomAdd, salvando && { opacity: 0.5 }]}
-            onPress={salvarAmbiente}
-            disabled={salvando}
-          >
-            {salvando
-              ? <ActivityIndicator color="white" />
-              : <Text style={styles.textBottons}>Atribuir sensor</Text>}
-          </TouchableOpacity>
+        <View style={{ justifyContent: 'space-between', marginHorizontal: 75, flexDirection: 'row' }}>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={[styles.bottomAdd, { backgroundColor: 'red' }]}
+              onPress={() => navigation.navigate('Rooms')}
+            >
+              <Text style={styles.textBottons}>Cencelar</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.container}>
+            <TouchableOpacity
+              style={[styles.bottomAdd, salvando && { opacity: 0.5 }]}
+              onPress={salvarAmbiente}
+              disabled={salvando}
+            >
+              {salvando
+                ? <ActivityIndicator color="white" />
+                : <Text style={styles.textBottons}>Atribuir sensor</Text>}
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
 
@@ -199,10 +204,6 @@ const styles = StyleSheet.create({
     lineHeight: 30,
     color: '#0F0F0F',
     marginHorizontal: 50
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   boxAddRoom: {
     backgroundColor: 'rgba(217, 217, 217, 0.44)',
@@ -278,7 +279,7 @@ const styles = StyleSheet.create({
   },
   bottomAdd: {
     backgroundColor: '#071739',
-    width: '40%',
+    width: '100%',
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',

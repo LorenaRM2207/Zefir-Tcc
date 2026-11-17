@@ -135,7 +135,7 @@ export default function Rooms2() {
                 <View style={{ width: '110%' }}>
                   <View style={[styles.boxConects3, { width: '78%' }]}>
                       <Feather name="power" size={20} color="#D64545" />
-                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
+                      <Text style={[styles.textConfiguration, { fontSize: 15, textAlign:'center' }]}> Desligar sensor</Text>
                     </View>
                 </View>
               </View>
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   },
   boxConects3: {
     backgroundColor: '#A4B5C4',
-    width: '85%',
+    width: '90%',
     height: 35,
     flexDirection: 'row',
     alignItems: 'center',

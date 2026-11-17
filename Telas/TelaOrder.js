@@ -10,6 +10,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 //icones
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons'
 import Feather from '@expo/vector-icons/Feather'
+import AvatarPerfil from '../components/AvatarPerfil'
 
 function moeda(valor) {
   return 'R$ ' + Number(valor || 0).toFixed(2).replace('.', ',')
@@ -82,9 +83,7 @@ export default function TelaBuy() {
               <Feather name="message-square" size={35} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Sensor adquirido</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-              <Image source={require('../assets/Avatar.png')} style={styles.imageHeader} />
-            </TouchableOpacity>
+            <AvatarPerfil/>
           </View>
         </View>
 
@@ -185,10 +184,6 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 10,
     textAlign: 'center'
-  },
-  imageHeader: {
-    width: 50,
-    height: 50,
   },
   image: {
     width: 90,
