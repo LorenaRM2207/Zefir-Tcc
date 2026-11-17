@@ -4,6 +4,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { onAuthStateChanged } from 'firebase/auth'
 import { collection, query, where, onSnapshot, doc, getDoc, writeBatch, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
+import { criarNotificacao } from '../components/ConfigNotification'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -14,6 +15,7 @@ import Ionicons from '@expo/vector-icons/Ionicons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
+
 
 const PRECO_UNIDADE = 109.99
 const FRETE_FIXO = 19.9
@@ -183,6 +185,12 @@ export default function TelaPayment() {
     } finally {
       setComprando(false)
     }
+    await batch.commit()
+    criarNotificacao('pedido', 'Pedido realizado',
+      `Pedido nº ${idPedido} no valor de ${moeda(total)}.`, `pedido_${idPedido}`)
+    criarNotificacao('pagamento', 'Pagamento concluído',
+      `Pagamento de ${moeda(total)} aprovado.`, `pagamento_${idPedido}`)
+    navigation.navigate('TelaOrder', { idPedido })
   }
 
   if (!fontsLoaded) {
@@ -336,10 +344,10 @@ export default function TelaPayment() {
                 </View>
               </View>
             </View>
-            <View style={{ justifyContent: 'space-between', marginHorizontal: 60, flexDirection: 'row', alignItems:'center' }}>
+            <View style={{ justifyContent: 'space-between', marginHorizontal: 60, flexDirection: 'row', alignItems: 'center' }}>
               <View style={styles.container}>
                 <TouchableOpacity
-                  style={[styles.bottomAdd, { backgroundColor: 'red',width: 110, height: 50, }]}
+                  style={[styles.bottomAdd, { backgroundColor: 'red', width: 110, height: 50, }]}
                   onPress={() => navigation.navigate('Principal')}
                 >
                   <Text style={styles.textBottons}>Cancelar</Text>

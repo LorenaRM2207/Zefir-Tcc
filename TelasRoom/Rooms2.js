@@ -3,6 +3,7 @@ import { useNavigation, useRoute } from '@react-navigation/native'
 import { useState, useEffect } from 'react'
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
 import { db } from '../config/firebase'
+import { criarNotificacao } from '../components/ConfigNotification'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
@@ -46,6 +47,18 @@ export default function Rooms2() {
   const horaLeitura = dataLeitura
     ? `${String(dataLeitura.getHours()).padStart(2, '0')}:${String(dataLeitura.getMinutes()).padStart(2, '0')}`
     : ''
+  useEffect(() => {
+    if (!dataLeitura) return
+    const t = dataLeitura.getTime()
+    if (gasAlto) {
+      criarNotificacao('gas', 'Gás detectado',
+        `Nível de gás acima do normal às ${horaLeitura}. Saia do local até estabilizar.`, `gas_${t}`)
+    }
+    if (!conectado) {
+      criarNotificacao('conexao', 'Sensor desconectado',
+        `O sensor está sem enviar dados desde ${horaLeitura}.`, `conexao_${t}`)
+    }
+  }, [gasAlto, conectado, dataLeitura?.getTime()])
 
   if (!fontsLoaded) {
     return null
@@ -134,9 +147,9 @@ export default function Rooms2() {
 
                 <View style={{ width: '110%' }}>
                   <View style={[styles.boxConects3, { width: '78%' }]}>
-                      <Feather name="power" size={20} color="#D64545" />
-                      <Text style={[styles.textConfiguration, { fontSize: 15, textAlign:'center' }]}> Desligar sensor</Text>
-                    </View>
+                    <Feather name="power" size={20} color="#D64545" />
+                    <Text style={[styles.textConfiguration, { fontSize: 15, textAlign: 'center' }]}> Desligar sensor</Text>
+                  </View>
                 </View>
               </View>
 
