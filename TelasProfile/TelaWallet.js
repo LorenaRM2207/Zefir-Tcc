@@ -10,14 +10,26 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import AntDesign from '@expo/vector-icons/AntDesign'
+
+function moeda(valor) {
+  return 'R$ ' + Number(valor || 0).toFixed(2).replace('.', ',')
+}
+
+function formatarDataHora(ts) {
+  if (!ts || !ts.toDate) return ''
+  const d = ts.toDate()
+  const p = (n) => String(n).padStart(2, '0')
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()} às ${p(d.getHours())}:${p(d.getMinutes())}`
+}
 
 export default function Wallet() {
 
   const navigation = useNavigation()
   const [cartoes, setCartoes] = useState([])
+  const [transacoes, setTransacoes] = useState([])
+  const [carregandoTransacoes, setCarregandoTransacoes] = useState(true)
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
     ManropeMedium: Manrope_500Medium,
@@ -26,16 +38,22 @@ export default function Wallet() {
   })
 
   useEffect(() => {
-    let cancelarLeitura = null
+    let cancelarCartoes = null
+    let cancelarTransacoes = null
+
     const cancelarAuth = onAuthStateChanged(auth, (usuario) => {
-      if (cancelarLeitura) cancelarLeitura()
+      if (cancelarCartoes) cancelarCartoes()
+      if (cancelarTransacoes) cancelarTransacoes()
+
       if (!usuario) {
         setCartoes([])
+        setTransacoes([])
+        setCarregandoTransacoes(false)
         return
       }
-      const q = query(collection(db, 'Forma_pagamento'), where('uid', '==', usuario.uid))
-      cancelarLeitura = onSnapshot(
-        q,
+
+      cancelarCartoes = onSnapshot(
+        query(collection(db, 'Forma_pagamento'), where('uid', '==', usuario.uid)),
         (snapshot) => {
           const lista = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
           lista.sort((a, b) => (a.criado_em?.seconds || 0) - (b.criado_em?.seconds || 0))
@@ -43,12 +61,29 @@ export default function Wallet() {
         },
         (erro) => console.error('Erro ao ler cartões: ', erro)
       )
+
+      cancelarTransacoes = onSnapshot(
+        query(collection(db, 'Pagamento'), where('uid', '==', usuario.uid)),
+        (snapshot) => {
+          const lista = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }))
+          lista.sort((a, b) => (b.data?.seconds || 0) - (a.data?.seconds || 0))
+          setTransacoes(lista.slice(0, 5))
+          setCarregandoTransacoes(false)
+        },
+        (erro) => {
+          console.error('Erro ao ler transações: ', erro)
+          setCarregandoTransacoes(false)
+        }
+      )
     })
+
     return () => {
       cancelarAuth()
-      if (cancelarLeitura) cancelarLeitura()
+      if (cancelarCartoes) cancelarCartoes()
+      if (cancelarTransacoes) cancelarTransacoes()
     }
   }, [])
+
   function removerCartao(cartao) {
     Alert.alert(
       'Remover cartão',
@@ -91,10 +126,11 @@ export default function Wallet() {
           <Text style={styles.textTitle}>Forma de pagamento</Text>
           <Text style={styles.textInformation2}>Cadastradas</Text>
         </View>
+
         {/* Cartões*/}
         {cartoes.length === 0 ? (
           <View style={styles.container}>
-            <Text style={styles.textInformation2}>Nenhum cartão cadastrado.</Text>
+            <Text style={styles.textVazio}>Nenhum cartão cadastrado.</Text>
           </View>
         ) : (
           cartoes.map((c) => (
@@ -116,6 +152,7 @@ export default function Wallet() {
             </View>
           ))
         )}
+
         {/* Add forma de pagamento*/}
         <View style={styles.container}>
           <TouchableOpacity
@@ -127,50 +164,45 @@ export default function Wallet() {
           </TouchableOpacity>
         </View>
 
+        {/* Histórico de transações */}
         <View style={{ margin: 20, marginLeft: 30 }}>
-          <Text style={styles.textTitle}>Seus Dispositivos</Text>
-          <Text style={styles.textInformation2}>Conectados</Text>
+          <Text style={styles.textTitle}>Últimas transações</Text>
+          <Text style={styles.textInformation2}>Suas compras mais recentes</Text>
         </View>
-        {/* Ultimas compras*/}
-        <View style={styles.container}>
-          <View style={styles.boxRooms}>
-            <View style={styles.columnsRow}>
-              {/* Icone */}
-              <View style={{ paddingRight: 25, paddingLeft: 20 }}>
-                <Ionicons name="wallet-outline" size={35} color="#6C7072" />
-              </View>
-              {/* Texto */}
-              <View style={{ paddingRight: 33 }}>
-                <Text style={styles.textInformation}>Cartão de débito</Text>
-                <Text style={styles.textInformation2}>Sensor Zefir, R$------</Text>
+
+        {carregandoTransacoes ? (
+          <View style={styles.container}>
+            <Text style={styles.textVazio}>Carregando...</Text>
+          </View>
+        ) : transacoes.length === 0 ? (
+          <View style={styles.container}>
+            <Text style={styles.textVazio}>Você ainda não fez nenhuma compra.</Text>
+          </View>
+        ) : (
+          transacoes.map((t) => (
+            <View key={t.id} style={styles.container}>
+              <View style={styles.boxRooms}>
+                <View style={styles.columnsRow}>
+                  <View style={{ paddingRight: 25, paddingLeft: 20 }}>
+                    <Ionicons name="wallet-outline" size={35} color="#6C7072" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.textInformation}>Sensor Zefir</Text>
+                    <Text style={styles.textData}>{formatarDataHora(t.data)}</Text>
+                    <Text style={styles.textInformation2} numberOfLines={1}>
+                      {t.forma_pagamento || 'Pagamento'}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end', paddingRight: 15 }}>
+                    <Text style={styles.textValor}>{moeda(t.valor)}</Text>
+                    <Text style={styles.textStatus}>{t.status}</Text>
+                  </View>
+                </View>
               </View>
             </View>
-          </View>
-        </View>
-        {/* Ultimas compras*/}
-        <View style={styles.container}>
-          <View style={styles.boxRooms}>
-            <View style={styles.columnsRow}>
-              {/* Icone */}
-              <View style={{ paddingRight: 23, paddingLeft: 20 }}>
-                <Ionicons name="wallet-outline" size={35} color="#6C7072" />
-              </View>
-              {/* Texto */}
-              <View style={{ paddingRight: 70 }}>
-                <Text style={styles.textInformation}> Cartão de débito</Text>
-                <Text style={styles.textInformation2}>Sensor Zefir, R$------</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={styles.container}>
-          <TouchableOpacity
-            style={{ flexDirection: 'row', margin: 20, alignItems: 'center' }}
-          >
-            <MaterialCommunityIcons name="location-exit" size={27} color="red" />
-            <Text style={styles.textInformation3}>Desconectar todos</Text>
-          </TouchableOpacity>
-        </View>
+          ))
+        )}
+
         {/* Bottom Add */}
         <View style={styles.container}>
           <TouchableOpacity
@@ -181,7 +213,6 @@ export default function Wallet() {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
     </View>
   )
 }
@@ -206,11 +237,12 @@ const styles = StyleSheet.create({
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
     width: '90%',
-    height: 80,
+    minHeight: 80,
     borderRadius: 20,
     alignItems: 'center',
     margin: 10,
     justifyContent: 'center',
+    paddingVertical: 8,
   },
   columnsRow: {
     flexDirection: 'row',
@@ -221,7 +253,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope',
     fontSize: 20,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 24,
     color: '#0F0F0F',
   },
   textInformation2: {
@@ -232,13 +264,29 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginTop: 5
   },
-  textInformation3: {
+  textData: {
+    fontFamily: 'Manrope',
+    fontSize: 13,
+    color: '#4A4F54',
+    marginTop: 2,
+  },
+  textValor: {
     fontFamily: 'ManropeBold',
-    fontSize: 20,
-    letterSpacing: 1,
-    lineHeight: 20,
-    color: '#0F0F0F',
-    marginLeft: 10
+    fontSize: 17,
+    color: '#071739',
+  },
+  textStatus: {
+    fontFamily: 'Manrope',
+    fontSize: 13,
+    color: '#1B8A2A',
+    marginTop: 4,
+  },
+  textVazio: {
+    fontFamily: 'Manrope',
+    fontSize: 17,
+    color: '#6C757D',
+    textAlign: 'center',
+    marginVertical: 10,
   },
   //Bottom adicionar pagamento
   boxAdd: {
@@ -255,7 +303,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: 'white'
   },
-  //
   bottomAdd: {
     backgroundColor: '#071739',
     width: '40%',

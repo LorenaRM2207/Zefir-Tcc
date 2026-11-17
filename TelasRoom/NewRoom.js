@@ -157,7 +157,7 @@ export default function NewRoom() {
               style={[styles.bottomAdd, { backgroundColor: 'red' }]}
               onPress={() => navigation.navigate('Rooms')}
             >
-              <Text style={styles.textBottons}>Cencelar</Text>
+              <Text style={styles.textBottons}>Cancelar</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.container}>

@@ -233,33 +233,15 @@ export default function Home() {
                 </View>
               </View>
             </View>
-            {/* Box Notification - Vazamento de gás */}
-            <View style={styles.container}>
-              <View style={styles.boxNotification}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <EvilIcons name="exclamation" size={35} color="red" />
-                  <Text style={styles.textNotification}> Houve um vazamento de gás</Text>
-                </View>
-                <View>
-                  <Text style={styles.text2Notification}>Mas não se preocupe ele já foi contido</Text>
-                </View>
-                <TouchableOpacity
-                  style={styles.bottom2}
-                  onPress={() => navigation.navigate('Notifications')}
-                >
-                  <Text style={styles.text3Notification}> Ver mais </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
             {/* Box Notification - Umidade do ar */}
             <View style={styles.container}>
               <View style={styles.box2Notification}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <EvilIcons name="exclamation" size={35} color="#463f3f" />
-                  <Text style={styles.textNotification}> Ligue seu umidificador </Text>
+                  <Text style={styles.textNotification}> Pedido Feito</Text>
                 </View>
                 <View>
-                  <Text style={styles.text2Notification}>O ar pode estar um pouco seco, a porcentagem ideal é de 50% a 60% </Text>
+                  <Text style={styles.text2Notification}>Sua ultima compra foi realizada com sucesso </Text>
                 </View>
                 <TouchableOpacity
                   style={styles.bottom2}
@@ -466,7 +448,7 @@ const styles = StyleSheet.create({
   },
   //Style Box Notification - Umidade do ar
   box2Notification: {
-    backgroundColor: '#D9D9D9',
+    backgroundColor: 'rgba(82, 130, 189, 0.53)',
     width: '90%',
     height: 150,
     borderRadius: 15,
