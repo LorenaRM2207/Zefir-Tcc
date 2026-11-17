@@ -26,7 +26,7 @@ export default function TelaConfiguration() {
   if (!fontsLoaded) {
     return null
   }
-  async function realizarLogout(){
+  async function realizarLogout() {
     await sair()
     navigation.navigate('Login')
   }
@@ -64,22 +64,6 @@ export default function TelaConfiguration() {
           </View>
         </TouchableOpacity>
       </View>
-      {/* Idioma*/}
-      <View style={styles.container}>
-        <View style={styles.boxRooms}>
-          <View style={styles.columnsRow}>
-            {/* Icone */}
-            <View style={{ paddingRight: 30, paddingLeft: 20 }}>
-              <Ionicons name="earth-outline" size={30} color="#6C7072" />
-            </View>
-            {/* Texto */}
-            <View>
-              <Text style={styles.textInformation}>Idioma</Text>
-              <Text style={styles.textInformation2}>Português (Brasil)</Text>
-            </View>
-          </View>
-        </View>
-      </View>
       {/* Sensor*/}
       <View style={styles.container}>
         <TouchableOpacity
@@ -97,6 +81,40 @@ export default function TelaConfiguration() {
             </View>
           </View>
         </TouchableOpacity>
+      </View>
+      {/* Politica de segurança */}
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.boxRooms}
+          onPress={() => navigation.navigate('TelaConfigSensor')}
+        >
+          <View style={styles.columnsRow}>
+            {/* Icone */}
+            <View style={{ paddingRight: 30, paddingLeft: 20 }}>
+              <MaterialCommunityIcons name="cloud-lock-outline" size={35} color="#6C7072" />
+            </View>
+            {/* Texto */}
+            <View>
+              <Text style={styles.textInformation}>Política de Segurança</Text>
+            </View>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {/* Idioma*/}
+      <View style={styles.container}>
+        <View style={styles.boxRooms}>
+          <View style={styles.columnsRow}>
+            {/* Icone */}
+            <View style={{ paddingRight: 30, paddingLeft: 20 }}>
+              <Ionicons name="earth-outline" size={30} color="#6C7072" />
+            </View>
+            {/* Texto */}
+            <View>
+              <Text style={styles.textInformation}>Idioma</Text>
+              <Text style={styles.textInformation2}>Português (Brasil)</Text>
+            </View>
+          </View>
+        </View>
       </View>
       <View style={styles.container}>
         <TouchableOpacity

@@ -140,7 +140,9 @@ export default function Home() {
               </View>
             )}
           </TouchableOpacity>
-          <TouchableOpacity onPress={trocarFoto} disabled={salvandoFoto}>
+          <TouchableOpacity 
+            style={{left:-25,}}
+            onPress={trocarFoto} disabled={salvandoFoto}>
             <FontAwesome6 name="pen-to-square" size={24} color="black" />
           </TouchableOpacity>
         </View>
@@ -175,11 +177,11 @@ export default function Home() {
           >
             <View style={styles.columnsRow}>
               {/* Icone */}
-              <View>
+              <View style={{marginLeft:-10}}>
                 <MaterialCommunityIcons name="cloud-lock-outline" size={35} color="#6C7072" />
               </View>
               {/* Texto */}
-              <View>
+              <View style={{marginLeft:-10}}>
                 <Text style={styles.textTitle}>Segurança e login</Text>
                 <Text style={styles.textEmail}>Dispositivos, senha</Text>
               </View>
@@ -287,14 +289,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope',
     fontSize: 20,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 25,
     color: '#0F0F0F',
   },
   textEmail: {
     fontFamily: 'Manrope',
     fontSize: 17,
     letterSpacing: 1,
-    lineHeight: 20,
+    lineHeight: 25,
     color: '#0F0F0F'
   },
   carregandoFoto: {

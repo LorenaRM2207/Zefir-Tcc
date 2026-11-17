@@ -36,7 +36,6 @@ export default function TelaSuporte() {
       <View style={styles.container}>
         <View>
         <Text style={styles.textTitle}>Há algo a relatar ou dúvidas?</Text>
-        <Text style={styles.textInformation2}>Agradecemos pela compra!</Text>
       </View>
       </View>
       {/* E-mail*/}

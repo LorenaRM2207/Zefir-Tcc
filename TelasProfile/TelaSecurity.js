@@ -391,7 +391,7 @@ export default function Security() {
       {/* Janela de confirmação */}
       <Modal transparent animationType="fade" visible={!!confirmacao} onRequestClose={() => setConfirmacao(null)}>
         <View style={styles.fundoModal}>
-          <View style={styles.caixaModal}>
+          <View style={styles.boxModal}>
             <Text style={styles.textTitle}>{confirmacao?.titulo}</Text>
             <Text style={styles.textInformation2}>{confirmacao?.texto}</Text>
             <View style={styles.bottonModal}>
@@ -539,6 +539,7 @@ textConfirmar: {
 },
 aviso: {
   position: 'absolute', 
+  backgroundColor:'white',
   top: 50, 
   left: 20, 
   right: 20,

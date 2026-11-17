@@ -340,7 +340,7 @@ export default function TelaPayment() {
               <View style={styles.container}>
                 <TouchableOpacity
                   style={[styles.bottomAdd, { backgroundColor: 'red',width: 110, height: 50, }]}
-                  onPress={() => navigation.navigate('Rooms')}
+                  onPress={() => navigation.navigate('Principal')}
                 >
                   <Text style={styles.textBottons}>Cancelar</Text>
                 </TouchableOpacity>

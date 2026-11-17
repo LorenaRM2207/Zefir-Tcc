@@ -4,14 +4,14 @@
     "slug": "zefir-tcc",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/Logo.png",
+    "icon": "./assets/Icone.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Logo.png",
+        "foregroundImage": "./assets/Icone.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.lorenarmarinho.zefirtcc"
