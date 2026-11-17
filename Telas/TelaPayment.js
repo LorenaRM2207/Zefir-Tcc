@@ -206,7 +206,7 @@ export default function TelaPayment() {
               <Feather name="message-square" size={35} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Adquirir sensor</Text>
-            <AvatarPerfil/>
+            <AvatarPerfil />
           </View>
         </View>
 
@@ -336,16 +336,26 @@ export default function TelaPayment() {
                 </View>
               </View>
             </View>
-            <View style={styles.container}>
-              <TouchableOpacity
-                style={[styles.boxBottom, comprando && { opacity: 0.5 }]}
-                onPress={comprar}
-                disabled={comprando}
-              >
-                {comprando
-                  ? <ActivityIndicator color="white" />
-                  : <Text style={styles.textBottons}>Comprar</Text>}
-              </TouchableOpacity>
+            <View style={{ justifyContent: 'space-between', marginHorizontal: 60, flexDirection: 'row', alignItems:'center' }}>
+              <View style={styles.container}>
+                <TouchableOpacity
+                  style={[styles.bottomAdd, { backgroundColor: 'red',width: 110, height: 50, }]}
+                  onPress={() => navigation.navigate('Rooms')}
+                >
+                  <Text style={styles.textBottons}>Cancelar</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.container}>
+                <TouchableOpacity
+                  style={[styles.boxBottom, comprando && { opacity: 0.5 }]}
+                  onPress={comprar}
+                  disabled={comprando}
+                >
+                  {comprando
+                    ? <ActivityIndicator color="white" />
+                    : <Text style={styles.textBottons}>Comprar</Text>}
+                </TouchableOpacity>
+              </View>
             </View>
           </>
         )}
@@ -430,7 +440,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: 100,
     height: 35,
-    borderRadius: 20,
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'space-around',
     padding: 5,
@@ -477,7 +487,7 @@ const styles = StyleSheet.create({
 
   boxBottom: {
     backgroundColor: '#071739',
-    width: '45%',
+    width: 110,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
