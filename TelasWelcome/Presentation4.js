@@ -34,7 +34,7 @@ export default function Presentation4() {
           <Text style={styles.text2Card1}>Pular</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView>
+
 
         {/* View de alinhamento */}
         <View style={{ alignItems: 'center' }}>
@@ -120,7 +120,6 @@ export default function Presentation4() {
             </TouchableOpacity>
           </View>
         </View>
-      </ScrollView>
     </View >
 
   )
@@ -214,10 +213,10 @@ const styles = StyleSheet.create({
   card1: {
     backgroundColor: "#F6F6F6",
     width: '100%',
-    minHeight: '20%',
+    minHeight: '60%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingVertical: 30,
+    paddingVertical: 50,
     paddingHorizontal: 30,
     alignItems: 'center',
     shadowColor: '#000',
@@ -229,7 +228,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 5,
     elevation: 5,
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
+    marginTop:40
   },
   titleContainer: {
     width: '100%',

@@ -1,9 +1,9 @@
 import { collection, query, where, orderBy, limit, onSnapshot } from 'firebase/firestore'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth, db } from '../config/firebase'
-import { criarNotificacao } from './notificacoes'
+import { criarNotificacao } from '../components/ConfigNotification'
 
-const LIMITE_GAS = 210
+const LIMITE_GAS = 2100
 const UMIDADE_MIN = 40
 const UMIDADE_MAX = 60
 
@@ -48,6 +48,7 @@ function verificarLeitura(id, leitura, estado) {
 export function iniciarMonitoramentoSensor() {
   let cancelarLeitura = null
   const estado = { gas: 'normal', umidade: 'normal' }
+  const ms = (t) => (t?.toMillis ? t.toMillis() : 0)
 
   const cancelarAuth = onAuthStateChanged(auth, (usuario) => {
     if (cancelarLeitura) {
@@ -64,15 +65,34 @@ export function iniciarMonitoramentoSensor() {
       collection(db, 'Leitura_sensor'),
       where('uid', '==', usuario.uid),
       orderBy('data_hora', 'desc'),
-      limit(1)
+      limit(10)
     )
+    let primeira = true
 
     cancelarLeitura = onSnapshot(
       consulta,
       (snapshot) => {
         if (snapshot.empty) return
-        const d = snapshot.docs[0]
-        verificarLeitura(d.id, d.data(), estado)
+
+        // Ao abrir o app: avalia só a leitura mais recente
+        if (primeira) {
+          primeira = false
+          const d = snapshot.docs[0]
+          console.log('Leitura inicial:', d.id, d.data().ppm_gas, d.data().umidade)
+          verificarLeitura(d.id, d.data(), estado)
+          return
+        }
+
+        // Depois: avalia cada leitura nova, da mais antiga para a mais nova
+        snapshot
+          .docChanges()
+          .filter((c) => c.type === 'added')
+          .map((c) => ({ id: c.doc.id, dados: c.doc.data() }))
+          .sort((a, b) => ms(a.dados.data_hora) - ms(b.dados.data_hora))
+          .forEach(({ id, dados }) => {
+            console.log('Leitura:', id, dados.ppm_gas, dados.umidade)
+            verificarLeitura(id, dados, estado)
+          })
       },
       (erro) => console.error('Erro ao monitorar sensor:', erro)
     )

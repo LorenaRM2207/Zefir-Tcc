@@ -1,5 +1,5 @@
 import Route from './Route'
-import { iniciarMonitoramentoSensor } from '../services/monitorSensor'
+import { iniciarMonitoramentoSensor } from './components/monitorSensor'
 import {NavigationContainer} from '@react-navigation/native'
 import { useEffect } from 'react'
 

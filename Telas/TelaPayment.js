@@ -238,7 +238,7 @@ export default function TelaPayment() {
             {/* Produto*/}
             <View style={styles.container}>
               <View style={styles.boxProduct}>
-                <View style={styles.columnsRow}>
+                <View style={[styles.columnsRow, {marginHorizontal:10}]}>
                   {/* Imagem */}
                   <Image
                     source={require('../assets/Logo.png')}
@@ -401,9 +401,9 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   image: {
-    width: 100,
-    height: 100,
-    marginHorizontal: 20
+    width: 90,
+    height: 90,
+    marginHorizontal: 5,
   },
   textTitle: {
     fontFamily: 'ManropeBold',
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 20,
     margin: 10,
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     alignItems: 'center'
   },
   textInformation: {
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   boxCard: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',

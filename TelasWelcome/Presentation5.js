@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   screen: {
     flex: 1,
-    flexDirection: 'column'
+
   },
   Align: {
     flex: 1,
@@ -91,7 +91,8 @@ const styles = StyleSheet.create({
     fontSize: 15,
     letterSpacing: 1,
     lineHeight: 20,
-    color: 'white'
+    color: 'white',
+    textAlign:'center'
   },
 
   bottom: {
@@ -113,5 +114,6 @@ const styles = StyleSheet.create({
   textCard1: {
     fontFamily: 'ManropeBold',
     fontSize: 30,
+    marginTop:70
   },
 })

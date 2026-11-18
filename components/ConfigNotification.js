@@ -46,6 +46,6 @@ export async function criarNotificacao(tipo, titulo, texto, chave) {
       }
     }
   } catch (erro) {
-    console.error('Erro ao criar notificação: ', erro)
+    console.error('Erro ao criar notificação:', erro.code, erro.message)
   }
 }

@@ -11,6 +11,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 function estiloDoTipo(tipo, lida) {
   if (lida) {
@@ -154,7 +155,7 @@ export default function Notifications() {
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaSuporte')}
           >
-            <Feather name="message-square" size={35} color="black" />
+            <MaterialIcons name="support-agent" size={40} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Notificação</Text>
           <AvatarPerfil />

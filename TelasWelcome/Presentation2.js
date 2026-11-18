@@ -29,7 +29,6 @@ export default function Presentation2() {
           <Text style={styles.text2Card1}>Pular</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView>
       {/* Logo */}
       <View style={styles.logoContainer}>
         <View style={styles.logoBox}>
@@ -64,7 +63,6 @@ export default function Presentation2() {
           </TouchableOpacity>
         </View>
       </View>
-      </ScrollView>
     </View>
 
   )
@@ -113,7 +111,7 @@ const styles = StyleSheet.create({
   card1: {
     backgroundColor: "#F6F6F6",
     width: '100%',
-    height: '20%',
+    height: '40%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingVertical: 30,
