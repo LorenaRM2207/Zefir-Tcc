@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -29,6 +29,7 @@ export default function Presentation2() {
           <Text style={styles.text2Card1}>Pular</Text>
         </TouchableOpacity>
       </View>
+      <ScrollView>
       {/* Logo */}
       <View style={styles.logoContainer}>
         <View style={styles.logoBox}>
@@ -63,6 +64,7 @@ export default function Presentation2() {
           </TouchableOpacity>
         </View>
       </View>
+      </ScrollView>
     </View>
 
   )

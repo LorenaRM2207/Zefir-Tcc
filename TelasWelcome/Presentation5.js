@@ -1,4 +1,4 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, Image } from 'react-native';
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 //fonte de aplicativo
 import { useFonts } from 'expo-font';
@@ -27,27 +27,29 @@ export default function Presentation5() {
         style={styles.background}
         resizeMode="cover"
       >
-        <View style={styles.Align}>
-          <Text style={styles.textCard1}>Sinta a Tranquilidade </Text>
-          <View style={styles.box1}>
-            <Text style={styles.textBox1}> Agora é só aproveitar a tranquilidade de ter o Zefir cuidando do seu ambiente.</Text>
+        <ScrollView>
+          <View style={styles.Align}>
+            <Text style={styles.textCard1}>Sinta a Tranquilidade </Text>
+            <View style={styles.box1}>
+              <Text style={styles.textBox1}> Agora é só aproveitar a tranquilidade de ter o Zefir cuidando do seu ambiente.</Text>
+            </View>
+            <View style={styles.container}>
+              <Image
+                source={require('../assets/Logo.png')}
+                style={styles.image}
+              />
+            </View>
+            <View>
+              <TouchableOpacity
+                style={styles.bottom}
+                onPress={() => navigation.navigate('Login')}
+              >
+                <Text style={styles.textBottom}> Ir para o app</Text>
+                <FontAwesome6 name="arrow-right-long" size={20} color="white" />
+              </TouchableOpacity>
+            </View>
           </View>
-          <View style={styles.container}>
-            <Image
-              source={require('../assets/Logo.png')}
-              style={styles.image}
-            />
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.bottom}
-              onPress={() => navigation.navigate('Login')}
-            >
-              <Text style={styles.textBottom}> Ir para o app</Text>
-              <FontAwesome6 name="arrow-right-long" size={20} color="white" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        </ScrollView>
       </ImageBackground>
     </View>
   )

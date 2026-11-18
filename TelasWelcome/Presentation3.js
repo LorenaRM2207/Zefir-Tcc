@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -28,105 +28,107 @@ export default function Presentation3() {
     <View style={styles.screen}>
 
       {/* Cabeçalho */}
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 15, marginTop:30 }}>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 15, marginTop: 30 }}>
         <Text style={styles.text2Card1}>2/3</Text>
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.text2Card1}>Pular</Text>
         </TouchableOpacity>
       </View>
+      <ScrollView>
 
-      {/* Box cozinha */}
-      <View style={styles.logoContainer}>
-        <View style={styles.logoBox}>
-          <Text style={styles.textCozinha}>Cozinha da hamburgueria </Text>
-          <Image
-            source={require('../assets/presentation3.png')}
-            style={styles.image}
-          />
+        {/* Box cozinha */}
+        <View style={styles.logoContainer}>
+          <View style={styles.logoBox}>
+            <Text style={styles.textCozinha}>Cozinha da hamburgueria </Text>
+            <Image
+              source={require('../assets/presentation3.png')}
+              style={styles.image}
+            />
+          </View>
+
+          {/* Box Sensor */}
+          <View style={styles.boxSensor}>
+            <View style={{ flexDirection: 'row' }}>
+              <EvilIcons name="exclamation" size={23} color="gray" />
+              <Text style={styles.textSensor}> Seu ambiente está seguro</Text>
+            </View>
+            <View>
+              <Text style={styles.text2Card1}>Nenhum problema encontrado</Text>
+            </View>
+          </View>
+
+          {/* Box Sensor Configurações */}
+          <View style={styles.boxSensor2}>
+            <View style={styles.columnsRow}>
+
+              {/* Box Sensor Configurações - Coluna 1 */}
+              <View style={{ alignItems: 'flex-start' }}>
+                <View style={styles.alignConfigurations}>
+                  <View style={styles.boxConects}>
+                    <Entypo name="link" size={20} color="black" />
+                  </View>
+                  <Text style={styles.text2Card1}> Conectado</Text>
+                </View>
+                <View style={styles.alignConfigurations}>
+                  <View style={styles.boxConects}>
+                    <Feather name="lock" size={20} color="black" />
+                  </View>
+                  <Text style={styles.text2Card1}> Seguro</Text>
+                </View>
+                <View style={styles.alignConfigurations}>
+                  <View style={styles.boxConects2}>
+                    <Feather name="droplet" size={20} color="black" />
+                  </View>
+                  <Text style={styles.text2Card1}> 40%</Text>
+                </View>
+              </View>
+
+              {/* Box Sensor Configurações - Coluna 2 */}
+              <View style={{ alignItems: 'flex-start' }}>
+                <View style={styles.alignConfigurations}>
+                  <View style={styles.boxConects}>
+                    <Feather name="battery" size={20} color="black" />
+                  </View>
+                  <Text style={styles.text2Card1}> 95%</Text>
+                </View>
+                <View style={styles.alignConfigurations}>
+                  <View style={styles.boxConects2}>
+                    <Feather name="wind" size={20} color="black" />
+                  </View>
+                  <Text style={styles.text2Card1}> 2%</Text>
+                </View>
+                <View style={styles.boxConects3}>
+                  <Feather name="power" size={18} color="#D64545" />
+                  <Text style={styles.text2Card1}> Desligar sensor</Text>
+                </View>
+              </View>
+            </View>
+          </View>
         </View>
 
-        {/* Box Sensor */}
-        <View style={styles.boxSensor}>
-          <View style={{ flexDirection: 'row' }}>
-            <EvilIcons name="exclamation" size={23} color="gray" />
-            <Text style={styles.textSensor}> Seu ambiente está seguro</Text>
+        {/* Card inferior */}
+        <View style={styles.card1}>
+          <View style={styles.titleContainer}>
+            <Text style={styles.textCard1}>
+              Conecte seu sensor
+            </Text>
+          </View>
+          <View style={styles.textContainer}>
+            <Text style={styles.text2Card1}>Ligue o sensor e siga as instruções para conectá-lo via Wi-Fi.
+              Assim, o app poderá monitorar seu ambiente e enviar alertas automáticos.
+            </Text>
           </View>
           <View>
-            <Text style={styles.text2Card1}>Nenhum problema encontrado</Text>
+            <TouchableOpacity
+              style={styles.bottom}
+              onPress={() => navigation.navigate('Presentation4')}
+            >
+              <Text style={styles.textBottom}> Continuar </Text>
+              <FontAwesome6 name="arrow-right-long" size={20} color="white" />
+            </TouchableOpacity>
           </View>
         </View>
-
-        {/* Box Sensor Configurações */}
-        <View style={styles.boxSensor2}>
-          <View style={styles.columnsRow}>
-
-            {/* Box Sensor Configurações - Coluna 1 */}
-            <View style={{ alignItems: 'flex-start' }}>
-              <View style={styles.alignConfigurations}>
-                <View style={styles.boxConects}>
-                  <Entypo name="link" size={20} color="black" />
-                </View>
-                <Text style={styles.text2Card1}> Conectado</Text>
-              </View>
-              <View style={styles.alignConfigurations}>
-                <View style={styles.boxConects}>
-                  <Feather name="lock" size={20} color="black" />
-                </View>
-                <Text style={styles.text2Card1}> Seguro</Text>
-              </View>
-              <View style={styles.alignConfigurations}>
-                <View style={styles.boxConects2}>
-                  <Feather name="droplet" size={20} color="black" />
-                </View>
-                <Text style={styles.text2Card1}> 40%</Text>
-              </View>
-            </View>
-
-            {/* Box Sensor Configurações - Coluna 2 */}
-            <View style={{ alignItems: 'flex-start' }}>
-              <View style={styles.alignConfigurations}>
-                <View style={styles.boxConects}>
-                  <Feather name="battery" size={20} color="black" />
-                </View>
-                <Text style={styles.text2Card1}> 95%</Text>
-              </View>
-              <View style={styles.alignConfigurations}>
-                <View style={styles.boxConects2}>
-                  <Feather name="wind" size={20} color="black" />
-                </View>
-                <Text style={styles.text2Card1}> 2%</Text>
-              </View>
-              <View style={styles.boxConects3}>
-                <Feather name="power" size={18} color="#D64545" />
-                <Text style={styles.text2Card1}> Desligar sensor</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Card inferior */}
-      <View style={styles.card1}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.textCard1}>
-            Conecte seu sensor
-          </Text>
-        </View>
-        <View style={styles.textContainer}>
-          <Text style={styles.text2Card1}>Ligue o sensor e siga as instruções para conectá-lo via Wi-Fi.
-            Assim, o app poderá monitorar seu ambiente e enviar alertas automáticos.
-          </Text>
-        </View>
-        <View>
-          <TouchableOpacity
-            style={styles.bottom}
-            onPress={() => navigation.navigate('Presentation4')}
-          >
-            <Text style={styles.textBottom}> Continuar </Text>
-            <FontAwesome6 name="arrow-right-long" size={20} color="white" />
-          </TouchableOpacity>
-        </View>
-      </View>
+      </ScrollView>
     </View >
 
   )
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 5,
     elevation: 5,
-    
+
   },
   titleContainer: {
     width: '100%',

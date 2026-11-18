@@ -29,6 +29,7 @@ export default function Presentation() {
         style={styles.background}
         resizeMode="cover"
       >
+        <ScrollView>
         
         <View style={styles.container}>
           <Image
@@ -54,6 +55,7 @@ export default function Presentation() {
             </TouchableOpacity>
           </View>
         </View>
+        </ScrollView>
         
       </ImageBackground>
       
