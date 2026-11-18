@@ -137,7 +137,7 @@ export default function Notifications() {
       console.log('Notificações apagadas!')
     } catch (erro) {
       console.error('Erro ao limpar notificações:', erro)
-      alert.alert('Não foi possível limpar as notificações.')
+      Alert.alert('Não foi possível limpar as notificações.')
     }
   }
 
@@ -157,7 +157,7 @@ export default function Notifications() {
             <Feather name="message-square" size={35} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Notificação</Text>
-          <AvatarPerfil/>
+          <AvatarPerfil />
         </View>
       </View>
       <ScrollView>

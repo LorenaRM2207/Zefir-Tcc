@@ -131,7 +131,7 @@ export default function Calendar() {
 
       if (!bateComFiltro) return
 
-      const indice = data.getDay() // 0 a 6
+      const indice = data.getDay() 
 
       baldesQualidade[indice].soma += item.ppm_gas
       baldesQualidade[indice].contagem += 1
@@ -336,7 +336,7 @@ export default function Calendar() {
                   xAxisThickness={1}
                   yAxisThickness={0}
                   yAxisLabelTexts={['Péssima', 'Muito Ruim', 'Ruim', 'Moderada', 'Boa']}
-                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
                   xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
                   noOfSections={4}
                   frontColor="#071739"
@@ -359,7 +359,7 @@ export default function Calendar() {
                   xAxisThickness={1}
                   yAxisThickness={0}
                   yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -381,7 +381,7 @@ export default function Calendar() {
                   xAxisThickness={1}
                   yAxisThickness={0}
                   yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 16 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
                   noOfSections={4}
                   frontColor="#D64545"
                 />

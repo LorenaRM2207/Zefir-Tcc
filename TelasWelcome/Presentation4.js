@@ -42,7 +42,7 @@ export default function Presentation4() {
           <View style={styles.boxSensor}>
             <View style={{ flexDirection: 'row' }}>
               <EvilIcons name="exclamation" size={23} color="red" />
-              <Text style={styles.textSensor}> Foi detectado gás no ambiente</Text>
+              <Text style={[styles.textSensor, { flexShrink: 1 }]}> Foi detectado gás no ambiente</Text>
             </View>
             <View>
               <Text style={styles.textSensor2}>Houve um pequeno vazamento de gás no ambiente às 16:44. Mas não se preocupe, ele já foi contido.</Text>
@@ -130,14 +130,13 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#F6F6F6',
-    justifyContent: 'space-between',
   },
 
   //Style Box Sensor
   boxSensor: {
     backgroundColor: '#FFEAD0',
     width: '80%',
-    height: 110,
+    minHeight: 110,
     borderRadius: 15,
     margin: 10,
     padding: 15,
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
   boxSensor2: {
     backgroundColor: '#D9D9D9',
     width: '80%',
-    height: 150,
+    minHeight: 150,
     borderRadius: 15,
     margin: 10,
     padding: 10,
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
   card1: {
     backgroundColor: "#F6F6F6",
     width: '100%',
-    height: '40%',
+    minHeight: '20%',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingVertical: 30,
@@ -237,7 +236,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     width: '100%',
-    margin: 30,
+    marginVertical: 20,
   },
   textCard1: {
     fontFamily: 'ManropeBold',
