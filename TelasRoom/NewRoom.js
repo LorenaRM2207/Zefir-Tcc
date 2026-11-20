@@ -10,6 +10,7 @@ import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
 import Feather from '@expo/vector-icons/Feather'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import AvatarPerfil from '../components/AvatarPerfil'
 
 
@@ -113,7 +114,7 @@ export default function NewRoom() {
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaSuporte')}
           >
-            <Feather name="message-square" size={35} color="black" />
+            <MaterialIcons name="support-agent" size={40} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Ambientes</Text>
           <AvatarPerfil/>
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
   },
   boxAddRoom: {
     backgroundColor: 'rgba(217, 217, 217, 0.44)',
-    width: '90%',
+    width: '85%',
     height: 80,
     borderRadius: 20,
     alignItems: 'center',
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   //Box Add Nome
   boxAddNome: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 90,
     borderRadius: 30,
     alignItems: 'center',
@@ -248,7 +249,7 @@ const styles = StyleSheet.create({
   // Box Add Foto 
   boxFoto: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 330,
     borderRadius: 30,
     alignItems: 'center',
@@ -265,7 +266,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden'
   },
   bottonSelect: {
-    backgroundColor: 'rgb(164, 181, 196)',
+    backgroundColor: 'rgba(139, 158, 175, 0.88)',
     width: '50%',
     height: 50,
     alignItems: 'center',

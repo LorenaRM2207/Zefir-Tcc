@@ -86,7 +86,7 @@ export default function TelaConfiguration() {
       <View style={styles.container}>
         <TouchableOpacity
           style={styles.boxRooms}
-          onPress={() => navigation.navigate('TelaConfigSensor')}
+          onPress={() => navigation.navigate('TelaPoliticaDeSeguranca')}
         >
           <View style={styles.columnsRow}>
             {/* Icone */}
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
   //Caixas de informações
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 80,
     borderRadius: 20,
     alignItems: 'center',

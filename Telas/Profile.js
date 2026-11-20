@@ -15,7 +15,6 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import Feather from '@expo/vector-icons/Feather'
 
 
 
@@ -117,7 +116,7 @@ export default function Home() {
             <TouchableOpacity
               onPress={() => navigation.navigate('TelaSuporte')}
             >
-              <Feather name="message-square" size={35} color="black" />
+              <MaterialIcons name="support-agent" size={40} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Perfil</Text>
             <TouchableOpacity
@@ -141,7 +140,7 @@ export default function Home() {
             )}
           </TouchableOpacity>
           <TouchableOpacity 
-            style={{left:-25,}}
+            style={{left:-15,}}
             onPress={trocarFoto} disabled={salvandoFoto}>
             <FontAwesome6 name="pen-to-square" size={24} color="black" />
           </TouchableOpacity>
@@ -247,16 +246,12 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 90
   },
-  imageHeader: {
-    width: 50,
-    height: 50,
-  },
   //Caixas de informações
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 90,
-    borderRadius: 30,
+    borderRadius: 25,
     alignItems: 'center',
     paddingLeft: 20,
     paddingRight: 10,
@@ -272,8 +267,8 @@ const styles = StyleSheet.create({
   },
   //User
   image: {
-    width: 150,
-    height: 150,
+    width: 130,
+    height: 130,
     borderRadius: 75,
     marginTop: 50
   },

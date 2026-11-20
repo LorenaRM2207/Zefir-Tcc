@@ -1,8 +1,9 @@
 import * as React from 'react'
+import { useState, useEffect } from 'react'
 import { View, StyleSheet, TouchableOpacity, Text, Image, ActivityIndicator, ScrollView } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { onAuthStateChanged } from 'firebase/auth'
-import { collection, query, where, getDocs } from 'firebase/firestore'
+import { collection, query, where, getDocs, onSnapshot, doc } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
@@ -11,6 +12,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons'
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
 function moeda(valor) {
   return 'R$ ' + Number(valor || 0).toFixed(2).replace('.', ',')
@@ -21,10 +23,11 @@ export default function TelaBuy() {
   const route = useRoute()
   const idPedido = route.params?.idPedido
 
-  const [pedido, setPedido] = React.useState(null)
-  const [itens, setItens] = React.useState([])
-  const [pagamento, setPagamento] = React.useState(null)
-  const [carregando, setCarregando] = React.useState(true)
+  const [pedido, setPedido] = useState(null)
+  const [nome, setNome] = useState('')
+  const [itens, setItens] = useState([])
+  const [pagamento, setPagamento] = useState(null)
+  const [carregando, setCarregando] = useState(true)
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -33,7 +36,7 @@ export default function TelaBuy() {
     ManropeBold: Manrope_700Bold,
   })
 
-  React.useEffect(() => {
+  useEffect(() => {
     const cancelarAuth = onAuthStateChanged(auth, async (usuario) => {
       if (!usuario) {
         setCarregando(false)
@@ -70,6 +73,30 @@ export default function TelaBuy() {
     return cancelarAuth
   }, [])
 
+  useEffect(() => {
+    let cancelarLeitura = null
+    const cancelarAuth = onAuthStateChanged(auth, (usuario) => {
+      if (cancelarLeitura) cancelarLeitura()
+      if (!usuario) {
+        setNome('')
+        return
+      }
+      cancelarLeitura = onSnapshot(
+        doc(db, 'Usuario', usuario.uid),
+        (snap) => {
+          const d = snap.exists() ? snap.data() : {}
+          setNome(d.nome || (usuario.email ? usuario.email.split('@')[0] : ''))
+        },
+        (erro) => console.error('Erro ao ler perfil: ', erro)
+      )
+    })
+
+    return () => {
+      cancelarAuth()
+      if (cancelarLeitura) cancelarLeitura()
+    }
+  }, [])
+
   if (!fontsLoaded) {
     return null
   }
@@ -80,10 +107,10 @@ export default function TelaBuy() {
         <View style={styles.container}>
           <View style={styles.header}>
             <TouchableOpacity onPress={() => navigation.navigate('TelaSuporte')}>
-              <Feather name="message-square" size={35} color="black" />
+              <MaterialIcons name="support-agent" size={40} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Sensor adquirido</Text>
-            <AvatarPerfil/>
+            <AvatarPerfil />
           </View>
         </View>
 
@@ -129,7 +156,7 @@ export default function TelaBuy() {
 
               {/* Entrega e valores */}
               <View style={styles.boxProduct2}>
-                <Text style={styles.textInformation3}>Endereço</Text>
+                <Text style={styles.textInformation3}>Endereço</Text>           
                 <Text style={styles.textInformation2}>{pedido.endereco_entrega}</Text>
                 <Text style={styles.textInformation2}>
                   Frete 7-14 dias   {moeda(pedido.valor_frete)}
@@ -142,6 +169,7 @@ export default function TelaBuy() {
                 <Text style={[styles.textInformation2, { marginTop: 10 }]}>
                   Status: {pedido.status_pedido}
                 </Text>
+                <Text style={styles.textInformation2}>Remetente: {nome}</Text>
               </View>
             </View>
           </View>

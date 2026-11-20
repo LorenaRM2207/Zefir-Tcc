@@ -8,8 +8,6 @@ import { auth, db } from '../config/firebase'
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
 //icones
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
-import Feather from '@expo/vector-icons/Feather'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 import EvilIcons from '@expo/vector-icons/EvilIcons'
@@ -179,7 +177,7 @@ const styles = StyleSheet.create({
   //Caixas de informações
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 80,
     borderRadius: 20,
     alignItems: 'center',

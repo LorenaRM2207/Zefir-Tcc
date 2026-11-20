@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView, ActivityIndicator, Alert } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView, ActivityIndicator, Alert, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useState, useEffect } from 'react'
 import { onAuthStateChanged } from 'firebase/auth'
@@ -11,7 +11,7 @@ import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700
 import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
 function estiloDoTipo(tipo, lida) {
   if (lida) {
@@ -32,6 +32,9 @@ export default function Notifications() {
   const [notificacoes, setNotificacoes] = useState([])
   const [carregando, setCarregando] = useState(true)
   const [uid, setUid] = useState(null)
+  const [confirmando, setConfirmando] = useState(false)
+  const [limpando, setLimpando] = useState(false)
+  const [erroLimpar, setErroLimpar] = useState('')
 
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -129,19 +132,21 @@ export default function Notifications() {
   }
   async function limparNotificacoes() {
     try {
+      setLimpando(true)
       await Promise.all(
         notificacoes.map((item) =>
           deleteDoc(doc(db, 'Notificacao', item.id))
         )
       )
-
-      console.log('Notificações apagadas!')
+      setConfirmando(false)
+      setErroLimpar('')
     } catch (erro) {
       console.error('Erro ao limpar notificações:', erro)
-      Alert.alert('Não foi possível limpar as notificações.')
+      setErroLimpar('Não foi possível limpar as notificações. Tente novamente.')
+    } finally {
+      setLimpando(false)
     }
   }
-
   if (!fontsLoaded) {
     return null
   }
@@ -164,7 +169,12 @@ export default function Notifications() {
       <ScrollView>
         {notificacoes.length > 0 && (
           <View style={styles.containerLimpar}>
-            <TouchableOpacity onPress={limparNotificacoes}>
+            <TouchableOpacity
+              onPress={() => {
+                setErroLimpar('')
+                setConfirmando(true)
+              }}
+            >
               <Text style={styles.textLimpar}>Limpar notificações</Text>
             </TouchableOpacity>
           </View>
@@ -225,6 +235,40 @@ export default function Notifications() {
           })
         )}
       </ScrollView>
+      <Modal
+        transparent
+        animationType="fade"
+        visible={confirmando}
+        onRequestClose={() => setConfirmando(false)}
+      >
+        <View style={styles.fundoModal}>
+          <View style={styles.caixaModal}>
+            <Text style={styles.textModalTitulo}>Limpar notificações</Text>
+            <Text style={styles.textModal}>
+              Deseja apagar todas as {notificacoes.length} notificações? Essa ação não pode ser desfeita.
+            </Text>
+            {!!erroLimpar && <Text style={styles.textErroModal}>{erroLimpar}</Text>}
+            <View style={styles.botoesModal}>
+              <TouchableOpacity
+                style={styles.botaoCancelar}
+                onPress={() => setConfirmando(false)}
+                disabled={limpando}
+              >
+                <Text style={styles.textCancelar}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.botaoExcluir}
+                onPress={limparNotificacoes}
+                disabled={limpando}
+              >
+                {limpando
+                  ? <ActivityIndicator color="white" />
+                  : <Text style={styles.textExcluirBtn}>Limpar</Text>}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -257,21 +301,11 @@ const styles = StyleSheet.create({
     color: '#0F0F0F',
     marginHorizontal: 50
   },
-  //Style Box Notification - Umidade do ar
-  box2Notification: {
-    backgroundColor: '#D9D9D9',
-    width: '90%',
-    height: 170,
-    borderRadius: 15,
-    margin: 10,
-    padding: 7,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  //Style Box Notification - Vazamento de gás
+  //Style Box Notification
+
   boxNotification: {
     backgroundColor: '#FFEAD0',
-    width: '90%',
+    width: '85%',
     borderRadius: 15,
     margin: 10,
     padding: 7,
@@ -345,6 +379,67 @@ const styles = StyleSheet.create({
     fontFamily: 'ManropeSemiBold',
     fontSize: 14,
     color: '#D64545',
+  },
+  fundoModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  caixaModal: {
+    backgroundColor: 'white',
+    width: '100%',
+    borderRadius: 20,
+    padding: 20,
+    gap: 12,
+  },
+  textModalTitulo: {
+    fontFamily: 'ManropeBold',
+    fontSize: 20, color: '#0F0F0F'
+  },
+  textModal: {
+    fontFamily: 'Manrope',
+    fontSize: 16,
+    color: '#0F0F0F',
+    lineHeight: 22
+  },
+  textErroModal: {
+    fontFamily: 'Manrope',
+    fontSize: 14,
+    color: '#D64545'
+  },
+  botoesModal: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: 10,
+    marginTop: 6
+  },
+  botaoCancelar: {
+    paddingHorizontal: 20,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(164, 181, 196, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textCancelar: {
+    fontFamily: 'ManropeBold',
+    fontSize: 16,
+    color: '#0F0F0F'
+  },
+  botaoExcluir: {
+    paddingHorizontal: 20,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#D64545',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textExcluirBtn: {
+    fontFamily: 'ManropeBold',
+    fontSize: 16,
+    color: 'white'
   },
 
 

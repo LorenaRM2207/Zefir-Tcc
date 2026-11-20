@@ -30,7 +30,8 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-build-properties"
+      "expo-build-properties",
+      "expo-sharing"
     ],
     "extra": {
       "eas": {

@@ -1,4 +1,6 @@
-import { View, StyleSheet, TouchableOpacity, Text, ScrollView, ActivityIndicator, Image } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, ScrollView, ActivityIndicator, Platform } from 'react-native'
+import * as Print from 'expo-print'
+import * as Sharing from 'expo-sharing'
 import { useNavigation } from '@react-navigation/native'
 //fontes
 import { useFonts } from 'expo-font'
@@ -12,7 +14,35 @@ import { collection, getDocs } from 'firebase/firestore'
 //icones
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
+function graficoSvg(dados, cor, opcoes = {}) {
+  const W = 640, H = 230, topo = 15, base = 34, esq = 48
+  const max = opcoes.max || Math.max(...dados.map((d) => d.value), 1)
+  const area = (W - esq) / dados.length
+  const larg = Math.min(area * 0.6, 30)
+  const alturaUtil = H - topo - base
+
+  const barras = dados.map((d, i) => {
+    const h = (d.value / max) * alturaUtil
+    const x = esq + i * area + (area - larg) / 2
+    return `
+      <rect x="${x}" y="${H - base - h}" width="${larg}" height="${h}" fill="${cor}" rx="3"/>
+      <text x="${x + larg / 2}" y="${H - base + 14}" font-size="9" text-anchor="middle" fill="#0F0F0F">${d.label}</text>`
+  }).join('')
+
+  const linha = opcoes.linha
+    ? `<line x1="${esq}" x2="${W}" y1="${H - base - (opcoes.linha / max) * alturaUtil}" y2="${H - base - (opcoes.linha / max) * alturaUtil}" stroke="#D64545" stroke-dasharray="5 4"/>
+       <text x="${W}" y="${H - base - (opcoes.linha / max) * alturaUtil - 4}" font-size="9" text-anchor="end" fill="#D64545">limite ${opcoes.linha} ppm</text>`
+    : ''
+
+  return `<svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+    <line x1="${esq}" x2="${W}" y1="${H - base}" y2="${H - base}" stroke="#999"/>
+    <text x="${esq - 6}" y="${H - base}" font-size="9" text-anchor="end">0</text>
+    <text x="${esq - 6}" y="${topo + 4}" font-size="9" text-anchor="end">${Math.round(max)}</text>
+    ${linha}${barras}
+  </svg>`
+}
 
 const mesesParaNumero = {
   'Jan': 0, 'Fev': 1, 'Mar': 2, 'Abr': 3,
@@ -22,21 +52,10 @@ const mesesParaNumero = {
 const numerosParaMes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
 
 //Rótulos fixos de cada aba
-const faixasHorarias = ['1-3', '4-6', '7-9', '10-12', '13-15', '16-18', '19-21', '22-00']
+const faixasHorarias = Array.from({ length: 24 }, (_, h) => `${h}h`)
 const faixasDeDias = ['1-7', '8-14', '15-21', '22-28', '29-30']
-const diasDaSemana = [1, 2, 3, 4, 5, 6, 7]
+const diasDaSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 
-//Horário
-function faixaHorariaIndex(hora) {
-  if (hora >= 1 && hora <= 3) return 0
-  if (hora >= 4 && hora <= 6) return 1
-  if (hora >= 7 && hora <= 9) return 2
-  if (hora >= 10 && hora <= 12) return 3
-  if (hora >= 13 && hora <= 15) return 4
-  if (hora >= 16 && hora <= 18) return 5
-  if (hora >= 19 && hora <= 21) return 6
-  return 7
-}
 //Dias
 function faixaDiaIndex(dia) {
   if (dia <= 7) return 0
@@ -47,6 +66,7 @@ function faixaDiaIndex(dia) {
 }
 export default function Calendar() {
 
+  const navigation = useNavigation()
   //Inicio da tela
   const [abaAtiva, setAbaAtiva] = useState('Diário')
   const [loading, setLoading] = useState(true)
@@ -58,6 +78,8 @@ export default function Calendar() {
   const [diaSelecionado, setDiaSelecionado] = useState(10)
   const [mesSelecionado, setMesSelecionado] = useState('Jul')
   const [anoSelecionado, setAnoSelecionado] = useState(2026)
+  //Compartilhar
+  const [gerandoPdf, setGerandoPdf] = useState(false)
   //Fontes
   const [fontsLoaded] = useFonts({
     Manrope: Manrope_400Regular,
@@ -96,7 +118,7 @@ export default function Calendar() {
 
       if (!bateComFiltro) return
 
-      const indice = faixaHorariaIndex(data.getHours())
+      const indice = data.getHours()
 
       baldesQualidade[indice].soma += item.ppm_gas
       baldesQualidade[indice].contagem += 1
@@ -116,9 +138,9 @@ export default function Calendar() {
   //Filtro Semanal
   function processarSemanal(querySnapshot) {
     const mesNumero = mesesParaNumero[mesSelecionado]
-    const baldesQualidade = criarBaldes(diasDaSemana.map(String))
-    const baldesUmidade = criarBaldes(diasDaSemana.map(String))
-    const baldesGas = criarBaldes(diasDaSemana.map(String))
+    const baldesQualidade = criarBaldes(diasDaSemana)
+    const baldesUmidade = criarBaldes(diasDaSemana)
+    const baldesGas = criarBaldes(diasDaSemana)
 
     querySnapshot.docs.forEach((doc) => {
       const item = doc.data()
@@ -131,7 +153,7 @@ export default function Calendar() {
 
       if (!bateComFiltro) return
 
-      const indice = data.getDay() 
+      const indice = data.getDay()
 
       baldesQualidade[indice].soma += item.ppm_gas
       baldesQualidade[indice].contagem += 1
@@ -240,7 +262,48 @@ export default function Calendar() {
     buscarDados()
   }, [abaAtiva, diaSelecionado, mesSelecionado, anoSelecionado])
 
-  const navigation = useNavigation()
+  function descricaoPeriodo() {
+    if (abaAtiva === 'Diário') return `Diário: ${String(diaSelecionado).padStart(2, '0')}/${mesSelecionado}/${anoSelecionado}`
+    if (abaAtiva === 'Semanal') return `Semanal: média por dia da semana em ${mesSelecionado}/${anoSelecionado}`
+    if (abaAtiva === 'Mensal') return `Mensal: ${mesSelecionado}/${anoSelecionado}`
+    return `Anual: ${anoSelecionado}`
+  }
+
+  //Gerar PDF
+  async function gerarPdf() {
+    try {
+      setGerandoPdf(true)
+      const html = `
+      <html><head><meta charset="utf-8"/>
+      <style>
+        body { font-family: Arial, sans-serif; padding: 24px; color: #0F0F0F; }
+        h1 { color: #071739; font-size: 22px; margin: 0; }
+        h2 { font-size: 16px; margin: 22px 0 4px; }
+        p { margin: 4px 0; color: #555; font-size: 13px; }
+      </style></head><body>
+        <h1>Relatório Zefir</h1>
+        <p><b>${descricaoPeriodo()}</b></p>
+        <p>Gerado em ${new Date().toLocaleString('pt-BR')}</p>
+        <h2>Qualidade do ar</h2>${graficoSvg(dadosQualidade, '#071739')}
+        <h2>Umidade relativa do ar (%)</h2>${graficoSvg(dadosUmidade, '#071739')}
+        <h2>Vazamento de gás detectado (ppm)</h2>${graficoSvg(dadosGas, '#D64545', { max: 2500, linha: 2100 })}
+      </body></html>`
+
+      if (Platform.OS === 'web') {
+        await Print.printAsync({ html })
+      } else {
+        const { uri } = await Print.printToFileAsync({ html })
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Relatório Zefir' })
+        }
+      }
+    } catch (erro) {
+      console.error('Erro ao gerar PDF: ', erro)
+    } finally {
+      setGerandoPdf(false)
+    }
+  }
+
 
   if (!fontsLoaded) {
     return null
@@ -253,10 +316,10 @@ export default function Calendar() {
           <TouchableOpacity
             onPress={() => navigation.navigate('TelaSuporte')}
           >
-            <Feather name="message-square" size={35} color="black" />
+            <MaterialIcons name="support-agent" size={40} color="black" />
           </TouchableOpacity>
           <Text style={styles.textHeader}>Calendário</Text>
-          <AvatarPerfil/>
+          <AvatarPerfil />
         </View>
       </View>
       {/* Abas */}
@@ -280,7 +343,7 @@ export default function Calendar() {
             onValueChange={(valor) => setDiaSelecionado(Number(valor))}
             style={styles.filtro}
           >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((dia) => (
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].map((dia) => (
               <Picker.Item key={dia} label={String(dia)} value={dia} />
             ))}
           </Picker>
@@ -321,7 +384,11 @@ export default function Calendar() {
             {/* Gráfico de qualidade do ar */}
             <View style={styles.boxGrafico}>
               <View style={{ flexDirection: 'row', }}>
-                <Feather name="share" size={24} color="black" />
+                <TouchableOpacity onPress={gerarPdf} disabled={gerandoPdf || loading}>
+                  {gerandoPdf
+                    ? <ActivityIndicator size="small" color="#071739" />
+                    : <Feather name="share" size={24} color="black" />}
+                </TouchableOpacity>
                 <Text style={[styles.titleGrafico, { paddingHorizontal: 50 }]}>Qualidade do ar</Text>
               </View>
               {dadosQualidade.length > 0 ? (
@@ -330,14 +397,15 @@ export default function Calendar() {
                   barWidth={18}
                   spacing={22}
                   initialSpacing={10}
-                  labelWidth={44}
+                  labelWidth={40}
                   roundedTop
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
+                  yAxisLabelWidth={70}
                   yAxisLabelTexts={['Péssima', 'Muito Ruim', 'Ruim', 'Moderada', 'Boa']}
-                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 13 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11, textAlign: 'center' }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -353,13 +421,15 @@ export default function Calendar() {
                 <BarChart
                   data={dadosUmidade}
                   barWidth={18}
-                  spacing={16}
+                  spacing={22}
+                  initialSpacing={10}
+                  labelWidth={40}
                   roundedTop
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
-                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11, textAlign: 'center' }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -375,14 +445,22 @@ export default function Calendar() {
                 <BarChart
                   data={dadosGas}
                   barWidth={18}
-                  spacing={16}
+                  spacing={22}
+                  initialSpacing={10}
+                  labelWidth={40}
                   roundedTop
                   hideRules
                   xAxisThickness={1}
                   yAxisThickness={0}
-                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 17 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11 }}
-                  noOfSections={4}
+                  maxValue={3000}
+                  noOfSections={6}
+                  stepValue={500}
+                  yAxisLabelWidth={50}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15, textAlign: 'center' }}
+                  showReferenceLine1
+                  referenceLine1Position={2100}
+                  referenceLine1Config={{ color: '#D64545', dashWidth: 6, dashGap: 4, thickness: 1.5 }}
                   frontColor="#D64545"
                 />
               ) : (

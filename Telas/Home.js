@@ -11,6 +11,7 @@ import EvilIcons from '@expo/vector-icons/EvilIcons'
 import Entypo from '@expo/vector-icons/Entypo'
 import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
+import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
 const LIMITE_GAS_PPM = 200
 const MINUTOS_CONECTADO = 10
@@ -57,21 +58,23 @@ export default function Home() {
 
     //View principal
     <View style={styles.screen}>
+
+
+      {/* Cabeçalho*/}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('TelaSuporte')}
+          >
+            <MaterialIcons name="support-agent" size={45} color="black" />
+          </TouchableOpacity>
+          <Text style={styles.textHeader}>Home</Text>
+          <AvatarPerfil />
+        </View>
+
+      </View>
       {modoAtivo ? (
         <>
-          {/* Cabeçalho*/}
-          <View style={styles.container}>
-            <View style={styles.header}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate('TelaSuporte')}
-              >
-                <Feather name="message-square" size={35} color="black" />
-              </TouchableOpacity>
-              <Text style={styles.textHeader}>Home</Text>
-              <AvatarPerfil/>
-            </View>
-
-          </View>
           <ScrollView>
             <View style={styles.logoContainer}>
               <View style={styles.logoBox}>
@@ -79,63 +82,28 @@ export default function Home() {
                   source={require('../assets/Logo.png')}
                   style={styles.image}
                 />
-                <View style={styles.boxSensor}>
-                  <TouchableOpacity
-                    onPress={alternarFuncao}
-                  >
-                    <Text style={styles.textSensor}> Conectar Sensor</Text>
-                  </TouchableOpacity>
-                </View>
+                <TouchableOpacity
+                  onPress={alternarFuncao}
+                  style={styles.boxSensor}
+                >
+                  <Text style={styles.textSensor}> Conectar Sensor</Text>
+                </TouchableOpacity>
               </View>
             </View>
             {/* Box Sensor Configurações */}
-            <View style={styles.configurationContainer}>
-              <View style={styles.boxSensor2}>
-                <View style={styles.columnsRow}>
-
-                  {/* Box Sensor Configurações - Coluna 1 */}
-                  <View style={{ alignItems: 'flex-start' }}>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects}>
-                        <Entypo name="link" size={27} color="black" />
-                      </View>
-                      <Text style={styles.textConfiguration}> Desconectado</Text>
-                    </View>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects}>
-                        <Feather name="lock" size={25} color="black" />
-                      </View>
-                      <Text style={styles.textConfiguration}> - </Text>
-                    </View>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects}>
-                        <Feather name="droplet" size={25} color="black" />
-                      </View>
-                      <Text style={styles.textConfiguration}> - </Text>
-                    </View>
-                  </View>
-
-                  {/* Box Sensor Configurações - Coluna 2 */}
-                  <View style={{ alignItems: 'flex-start' }}>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects}>
-                        <Feather name="battery" size={25} color="black" />
-                      </View>
-                      <Text style={styles.textConfiguration}> - </Text>
-                    </View>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects}>
-                        <Feather name="wind" size={25} color="black" />
-                      </View>
-                      <Text style={styles.textConfiguration}> - </Text>
-                    </View>
-                    <View style={[styles.boxConects3, { width: '78%' }]}>
-                      <Feather name="power" size={20} color="#D64545" />
-                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
-                    </View>
-                  </View>
-                </View>
+            <View style={styles.container}>
+              <View style={[styles.boxSensor2, { height: 120, justifyContent: 'center' }]}>
+                <Text style={[styles.text2Notification, { fontFamily: 'ManropeBold' }]}>Ainda não possui um sensor? </Text>
+                <Text style={styles.text2Notification}>Compre um novo agora para aproveitar de todas as funcionalidades do nosso aplicativo,.</Text>
               </View>
+              <Text style={[styles.textNotification, { fontSize: 25, color: '#071739', marginTop: 15 }]}> Zefir </Text>
+              <Text style={[styles.text2Notification, { fontSize: 19 }]}>Detectando riscos, Protegendo vidas</Text>
+              <TouchableOpacity
+                onPress={() => navigation.navigate('TelaBuy')}
+                style={[styles.bottom2, { marginTop: 15 }]}
+              >
+                <Text style={[styles.text3Notification, { fontFamily: 'Manrope' }]}> Compre já! </Text>
+              </TouchableOpacity>
             </View>
           </ScrollView>
 
@@ -144,17 +112,6 @@ export default function Home() {
         <>
           {/* Cabeçalho*/}
           <ScrollView>
-            <View style={styles.container}>
-              <View style={styles.header}>
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('TelaSuporte')}
-                >
-                  <Feather name="message-square" size={35} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.textHeader}>Home</Text>
-                <AvatarPerfil/>
-              </View>
-            </View>
             <View style={styles.container2}>
               <Image
                 source={require('../assets/presentation3.png')}
@@ -198,35 +155,22 @@ export default function Home() {
                       <Text style={styles.text2Notification}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
                     </View>
 
+
+                  </View>
+
+                  {/* Coluna 2 */}
+                  <View style={{ alignItems: 'flex-start' }}>
                     <View style={styles.alignConfigurations}>
                       <View style={styles.boxConects5}>
                         <Feather name="droplet" size={22} color="black" />
                       </View>
                       <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
                     </View>
-                  </View>
-
-                  {/* Coluna 2 */}
-                  <View style={{ alignItems: 'flex-start' }}>
-                    <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects4}>
-                        <Feather name="battery" size={22} color="black" />
-                      </View>
-                      <Text style={styles.text2Notification}>{leitura?.bateria != null ? ` ${leitura.bateria}%` : ' --'}</Text>
-                    </View>
-
                     <View style={styles.alignConfigurations}>
                       <View style={styles.boxConects5}>
                         <Feather name="wind" size={22} color="black" />
                       </View>
                       <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
-                    </View>
-
-                    <View style={{ width: '100%' }}>
-                      <View style={[styles.boxConects3, { width: '78%' }]}>
-                      <Feather name="power" size={20} color="#D64545" />
-                      <Text style={[styles.textConfiguration, { fontSize: 15 }]}> Desligar sensor</Text>
-                    </View>
                     </View>
                   </View>
 
@@ -287,7 +231,7 @@ const styles = StyleSheet.create({
     width: '85%',
     height: 200,
     backgroundColor: "#A4B5C4",
-    borderRadius: 15,
+    borderRadius: 20,
   },
   logoContainer: {
     alignItems: 'center',
@@ -298,15 +242,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   image: {
-    width: 150,
-    height: 150,
+    width: 140,
+    height: 140,
     margin: 10
   },
   boxSensor: {
     backgroundColor: '#071739',
     width: '110%',
     height: 70,
-    borderRadius: 15,
+    borderRadius: 20,
     padding: 15,
     alignItems: 'center',
     opacity: 0.9,
@@ -321,9 +265,9 @@ const styles = StyleSheet.create({
   },
   bottomBuy: {
     backgroundColor: '#071739',
-    width: '90%',
+    width: '85%',
     height: 70,
-    borderRadius: 15,
+    borderRadius: 20,
     padding: 15,
     alignItems: 'center',
     opacity: 0.9,
@@ -333,15 +277,15 @@ const styles = StyleSheet.create({
   //Style Box Configurações sensor
   boxSensor2: {
     backgroundColor: '#D9D9D9',
-    width: '90%',
-    height: 170,
-    borderRadius: 15,
+    width: '85%',
+    height: 130,
+    borderRadius: 20,
     margin: 10,
     padding: 10,
     alignItems: 'stretch',
   },
   boxConects: {
-    backgroundColor: 'red',
+    backgroundColor: '#D64545',
     width: 35,
     height: 35,
     borderRadius: 15,
@@ -369,16 +313,6 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-start',
   },
-  bottom: {
-    backgroundColor: "#071739",
-    borderRadius: 20,
-    width: '90%',
-    height: 80,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 10,
-    position: 'absolute'
-  },
 
 
 
@@ -401,15 +335,15 @@ const styles = StyleSheet.create({
   },
   //Ambientes
   image2: {
-    width: '90%',
+    width: '85%',
     height: 250,
-    borderRadius: 10,
+    borderRadius: 20,
   },
   boxBottom: {
-    backgroundColor: 'rgba(39, 32, 32, 0.64)',
-    width: '90%',
+    backgroundColor: 'rgba(39, 32, 32, 0.89)',
+    width: '85%',
     height: 70,
-    borderRadius: 15,
+    borderRadius: 20,
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
@@ -425,7 +359,7 @@ const styles = StyleSheet.create({
   },
   //Style Box Configurações sensor
   boxConects4: {
-    backgroundColor: '#1FC72A',
+    backgroundColor: '#71cf77',
     width: 35,
     height: 35,
     borderRadius: 15,
@@ -433,7 +367,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   boxConects5: {
-    backgroundColor: '#FFD726',
+    backgroundColor: 'rgba(255, 230, 119, 0.96)',
     width: 35,
     height: 35,
     borderRadius: 15,
@@ -449,25 +383,15 @@ const styles = StyleSheet.create({
   //Style Box Notification - Umidade do ar
   box2Notification: {
     backgroundColor: 'rgba(82, 130, 189, 0.53)',
-    width: '90%',
+    width: '85%',
     height: 150,
-    borderRadius: 15,
+    borderRadius: 20,
     margin: 10,
     padding: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
   //Style Box Notification - Vazamento de gás
-  boxNotification: {
-    backgroundColor: '#FFEAD0',
-    width: '90%',
-    height: 180,
-    borderRadius: 15,
-    margin: 10,
-    padding: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
   textNotification: {
     fontFamily: 'ManropeBold',
     fontSize: 19,
@@ -492,7 +416,7 @@ const styles = StyleSheet.create({
   bottom2: {
     backgroundColor: "#071739",
     borderRadius: 20,
-    width: 150,
+    width: 125,
     height: 40,
     alignItems: 'center',
     justifyContent: 'center',

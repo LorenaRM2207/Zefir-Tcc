@@ -33,6 +33,9 @@ import TelaSuporte from './Telas/TelaSuporte'
 import TelaConfiguration from './Telas/TelaConfiguration'
 import TelaConfigSensor from './Telas/TelaConfigSensor'
 import TelaConfigAlert from './Telas/TelaConfigAlert'
+import TelaPoliticaDeSeguranca from './Telas/TelaPoliticaDeSeguranca'
+import TermosDeUso from './Telas/TermosDeUso'
+import PoliticaDePrivacidade from './Telas/PoliticaDePrivacidade'
 
 
 
@@ -174,6 +177,18 @@ export default function Route() {
       <Stack.Screen
         name="TelaConfigSensor"
         component={TelaConfigSensor}
+      />
+      <Stack.Screen
+        name="TelaPoliticaDeSeguranca"
+        component={TelaPoliticaDeSeguranca}
+      />
+      <Stack.Screen
+        name="PoliticaDePrivacidade"
+        component={PoliticaDePrivacidade}
+      />
+      <Stack.Screen
+        name="TermosDeUso"
+        component={TermosDeUso}
       />
       {/* Tela Ambientes */}
       <Stack.Screen

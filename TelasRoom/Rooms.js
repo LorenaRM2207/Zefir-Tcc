@@ -230,7 +230,7 @@ const styles = StyleSheet.create({
   //Box Search
   boxSearch: {
     backgroundColor: 'rgba(217, 217, 217, 0.44)',
-    width: '90%',
+    width: '85%',
     height: 110,
     borderRadius: 30,
     alignItems: 'center',
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   //Box Rooms
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     minHeight: 90,
     borderRadius: 30,
     alignItems: 'center',

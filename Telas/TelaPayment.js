@@ -211,7 +211,7 @@ export default function TelaPayment() {
             <TouchableOpacity
               onPress={() => navigation.navigate('TelaSuporte')}
             >
-              <Feather name="message-square" size={35} color="black" />
+              <MaterialIcons name="support-agent" size={40} color="black" />
             </TouchableOpacity>
             <Text style={styles.textHeader}>Adquirir sensor</Text>
             <AvatarPerfil />
@@ -238,7 +238,7 @@ export default function TelaPayment() {
             {/* Produto*/}
             <View style={styles.container}>
               <View style={styles.boxProduct}>
-                <View style={[styles.columnsRow, {marginHorizontal:10}]}>
+                <View style={[styles.columnsRow, { marginHorizontal: 10 }]}>
                   {/* Imagem */}
                   <Image
                     source={require('../assets/Logo.png')}

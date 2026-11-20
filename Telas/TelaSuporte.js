@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   //Caixas de informações
   boxRooms: {
     backgroundColor: 'rgba(164, 181, 196, 0.5)',
-    width: '90%',
+    width: '85%',
     height: 80,
     borderRadius: 20,
     alignItems: 'center',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   Card: {
     backgroundColor: 'rgba(164, 181, 196, 0.2)',
-    width: '90%',
+    width: '85%',
     height: 490,
     borderRadius: 30,
     margin: 20,
