@@ -64,6 +64,13 @@ function faixaDiaIndex(dia) {
   if (dia <= 28) return 3
   return 4
 }
+function somar(balde, valor) {
+  const n = Number(valor)
+  if (Number.isFinite(n)) {
+    balde.soma += n
+    balde.contagem += 1
+  }
+}
 export default function Calendar() {
 
   const navigation = useNavigation()
@@ -75,9 +82,9 @@ export default function Calendar() {
   const [dadosUmidade, setDadosUmidade] = useState([])
   const [dadosGas, setDadosGas] = useState([])
   //Filtros
-  const [diaSelecionado, setDiaSelecionado] = useState(10)
-  const [mesSelecionado, setMesSelecionado] = useState('Jul')
-  const [anoSelecionado, setAnoSelecionado] = useState(2026)
+  const [diaSelecionado, setDiaSelecionado] = useState(() => new Date().getDate())
+  const [mesSelecionado, setMesSelecionado] = useState(() => numerosParaMes[new Date().getMonth()])
+  const [anoSelecionado, setAnoSelecionado] = useState(() => new Date().getFullYear())
   //Compartilhar
   const [gerandoPdf, setGerandoPdf] = useState(false)
   //Fontes
@@ -120,14 +127,9 @@ export default function Calendar() {
 
       const indice = data.getHours()
 
-      baldesQualidade[indice].soma += item.ppm_gas
-      baldesQualidade[indice].contagem += 1
-
-      baldesUmidade[indice].soma += item.umidade
-      baldesUmidade[indice].contagem += 1
-
-      baldesGas[indice].soma += item.nivel_fumaca
-      baldesGas[indice].contagem += 1
+      somar(baldesQualidade[indice], item.ppm_gas)
+      somar(baldesUmidade[indice], item.umidade)
+      somar(baldesGas[indice], item.ppm_gas)
     })
 
     setDadosQualidade(finalizarBaldes(baldesQualidade))
@@ -155,14 +157,9 @@ export default function Calendar() {
 
       const indice = data.getDay()
 
-      baldesQualidade[indice].soma += item.ppm_gas
-      baldesQualidade[indice].contagem += 1
-
-      baldesUmidade[indice].soma += item.umidade
-      baldesUmidade[indice].contagem += 1
-
-      baldesGas[indice].soma += item.nivel_fumaca
-      baldesGas[indice].contagem += 1
+      somar(baldesQualidade[indice], item.ppm_gas)
+      somar(baldesUmidade[indice], item.umidade)
+      somar(baldesGas[indice], item.ppm_gas)
     })
 
     setDadosQualidade(finalizarBaldes(baldesQualidade))
@@ -190,14 +187,9 @@ export default function Calendar() {
 
       const indice = faixaDiaIndex(data.getDate())
 
-      baldesQualidade[indice].soma += item.ppm_gas
-      baldesQualidade[indice].contagem += 1
-
-      baldesUmidade[indice].soma += item.umidade
-      baldesUmidade[indice].contagem += 1
-
-      baldesGas[indice].soma += item.nivel_fumaca
-      baldesGas[indice].contagem += 1
+      somar(baldesQualidade[indice], item.ppm_gas)
+      somar(baldesUmidade[indice], item.umidade)
+      somar(baldesGas[indice], item.ppm_gas)
     })
 
     setDadosQualidade(finalizarBaldes(baldesQualidade))
@@ -400,12 +392,13 @@ export default function Calendar() {
                   labelWidth={40}
                   roundedTop
                   hideRules
+                  scrollToEnd
                   xAxisThickness={1}
                   yAxisThickness={0}
                   yAxisLabelWidth={70}
                   yAxisLabelTexts={['Péssima', 'Muito Ruim', 'Ruim', 'Moderada', 'Boa']}
-                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 13 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11, textAlign: 'center' }}
+                  yAxisTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15, textAlign: 'center' }}
                   noOfSections={4}
                   frontColor="#071739"
                 />
@@ -423,14 +416,17 @@ export default function Calendar() {
                   barWidth={18}
                   spacing={22}
                   initialSpacing={10}
-                  labelWidth={40}
                   roundedTop
                   hideRules
+                  scrollToEnd
                   xAxisThickness={1}
                   yAxisThickness={0}
+                  maxValue={100}
+                  noOfSections={10}
+                  stepValue={10}
+                  yAxisLabelWidth={50}
                   yAxisTextStyle={{ color: '#0F0F0F', fontSize: 15 }}
-                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 11, textAlign: 'center' }}
-                  noOfSections={4}
+                  xAxisLabelTextStyle={{ color: '#0F0F0F', fontSize: 15, textAlign: 'center' }}
                   frontColor="#071739"
                 />
               ) : (
@@ -450,6 +446,7 @@ export default function Calendar() {
                   labelWidth={40}
                   roundedTop
                   hideRules
+                  scrollToEnd
                   xAxisThickness={1}
                   yAxisThickness={0}
                   maxValue={3000}

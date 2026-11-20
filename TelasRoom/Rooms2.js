@@ -102,57 +102,38 @@ export default function Rooms2() {
         </View>
         {/* Box Sensor Configurações */}
         <View style={styles.container}>
-          <View style={styles.boxSensor2}>
+          <View style={styles.boxConfiguration}>
             <View style={styles.columnsRow}>
-
               {/* Coluna 1 */}
               <View style={{ alignItems: 'flex-start' }}>
                 <View style={styles.alignConfigurations}>
                   <View style={[styles.boxConects, !conectado && { backgroundColor: '#D64545' }]}>
-                    <Entypo name="link" size={20} color="black" />
+                    <Entypo name="link" size={22} color="black" />
                   </View>
-                  <Text style={styles.text2Card1}>{conectado ? ' Conectado' : ' Desconectado'}</Text>
+                  <Text style={styles.textConfiguration}>{conectado ? ' Conectado' : ' Desconectado'}</Text>
                 </View>
-
                 <View style={styles.alignConfigurations}>
                   <View style={[styles.boxConects, gasAlto && { backgroundColor: '#D64545' }]}>
-                    <Feather name="lock" size={20} color="black" />
+                    <Feather name="lock" size={22} color="black" />
                   </View>
-                  <Text style={styles.text2Card1}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
-                </View>
-
-                <View style={styles.alignConfigurations}>
-                  <View style={styles.boxConects2}>
-                    <Feather name="droplet" size={20} color="black" />
-                  </View>
-                  <Text style={styles.text2Card1}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
+                  <Text style={styles.textConfiguration}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
                 </View>
               </View>
-
               {/* Coluna 2 */}
               <View style={{ alignItems: 'flex-start' }}>
                 <View style={styles.alignConfigurations}>
-                  <View style={styles.boxConects}>
-                    <Feather name="battery" size={20} color="black" />
+                  <View style={styles.boxConects2}>
+                    <Feather name="droplet" size={22} color="black" />
                   </View>
-                  <Text style={styles.text2Card1}>{leitura?.bateria != null ? ` ${leitura.bateria}%` : ' --'}</Text>
+                  <Text style={styles.textConfiguration}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
                 </View>
-
                 <View style={styles.alignConfigurations}>
                   <View style={styles.boxConects2}>
-                    <Feather name="wind" size={20} color="black" />
+                    <Feather name="wind" size={22} color="black" />
                   </View>
-                  <Text style={styles.text2Card1}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
-                </View>
-
-                <View style={{ width: '110%' }}>
-                  <View style={[styles.boxConects3, { width: '78%' }]}>
-                    <Feather name="power" size={20} color="#D64545" />
-                    <Text style={[styles.textConfiguration, { fontSize: 15, textAlign: 'center' }]}> Desligar sensor</Text>
-                  </View>
+                  <Text style={styles.textConfiguration}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
                 </View>
               </View>
-
             </View>
           </View>
         </View>
@@ -173,7 +154,7 @@ const styles = StyleSheet.create({
   },
   boxSensor: {
     backgroundColor: '#FFEAD0',
-    width: '90%',
+    width: '85%',
     minHeight: 110,
     borderRadius: 15,
     margin: 10,
@@ -191,7 +172,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
     padding: 10,
-    width: '90%',
+    width: '85%',
     height: 300,
     backgroundColor: "#A4B5C4",
     borderRadius: 15,
@@ -204,8 +185,8 @@ const styles = StyleSheet.create({
     margin: 10
   },
   textCozinha: {
-    fontFamily: 'Manrope',
-    fontSize: 17,
+    fontFamily: 'ManropeMedium',
+    fontSize: 22,
     letterSpacing: 1,
     lineHeight: 20,
     color: 'white',
@@ -216,42 +197,15 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: 'black'
   },
-  //Style Box Configurações sensor
-  boxSensor2: {
+  //Style box configurações sensor
+  boxConfiguration: {
     backgroundColor: '#D9D9D9',
-    width: '90%',
-    minHeight: 150,
-    borderRadius: 15,
-    margin: 20,
+    width: '85%',
+    height: 130,
+    borderRadius: 20,
+    margin: 10,
     padding: 10,
-    alignItems: 'center',
-
-  },
-  boxConects: {
-    backgroundColor: '#1FC72A',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  boxConects2: {
-    backgroundColor: '#FFD726',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  boxConects3: {
-    backgroundColor: '#A4B5C4',
-    width: '90%',
-    height: 35,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    marginTop: 15,
+    alignItems: 'stretch',
   },
   alignConfigurations: {
     flexDirection: 'row',
@@ -263,6 +217,29 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     width: '100%',
     alignItems: 'flex-start',
+  },
+  boxConects: {
+    backgroundColor: '#71cf77',
+    width: 35,
+    height: 35,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  boxConects2: {
+    backgroundColor: 'rgba(255, 230, 119, 0.96)',
+    width: 35,
+    height: 35,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textConfiguration: {
+    fontFamily: 'Manrope',
+    fontSize: 17,
+    letterSpacing: 1,
+    lineHeight: 20,
+    textAlign: 'center'
   },
   text2Card1: {
     fontFamily: 'Manrope',

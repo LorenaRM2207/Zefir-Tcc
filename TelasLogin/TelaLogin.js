@@ -86,33 +86,11 @@ navigation.navigate("Principal");
           >
             <Text style={styles.textBottom}> Entrar</Text>
           </TouchableOpacity>
-          <Text style={styles.textCard1}>ou crie com</Text>
-          {/* Imagens */}
-          <View style={styles.boxAling}>
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/GoogleLogo.png')}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/AppleLogo.png')}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/MicrosoftLogo.png')}
-                style={styles.image}
-              />
-            </View>
-          </View>
           {/* Botão - Criar conta*/}
           <TouchableOpacity
             onPress={() => navigation.navigate('Cadastro')}
           >
-            <Text style={styles.textBottom2}> Não Possui conta? </Text>
+            <Text style={styles.textBottom2}> Não Possui conta? Crie agora </Text>
           </TouchableOpacity>
         </View>
       </ImageBackground>
@@ -138,8 +116,8 @@ const styles = StyleSheet.create({
   box1: {
     backgroundColor: '#4B6382',
     width: '90%',
-    height: '60%',
-    borderRadius: 15,
+    height: '50%',
+    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'space-between',
     alignSelf: 'center',

@@ -77,9 +77,11 @@ export function iniciarMonitoramentoSensor() {
         // Ao abrir o app: avalia só a leitura mais recente
         if (primeira) {
           primeira = false
-          const d = snapshot.docs[0]
-          console.log('Leitura inicial:', d.id, d.data().ppm_gas, d.data().umidade)
-          verificarLeitura(d.id, d.data(), estado)
+          const recentes = snapshot.docs
+            .map((d) => ({ id: d.id, dados: d.data() }))
+            .sort((a, b) => ms(a.dados.data_hora) - ms(b.dados.data_hora))
+          console.log('Leituras iniciais:', recentes.length)
+          recentes.forEach(({ id, dados }) => verificarLeitura(id, dados, estado))
           return
         }
 

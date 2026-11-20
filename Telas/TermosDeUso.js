@@ -32,7 +32,7 @@ export default function TermosDeUso() {
         </TouchableOpacity>
       </View>
       <ScrollView>
-      <View style={[styles.container,{ paddingHorizontal:20}]}>
+      <View style={[styles.container,{ paddingHorizontal:25}]}>
         <Text style={styles.textInformation}>1. ACEITAÇÃO DOS TERMOS</Text>
         <Text style={styles.textInformation2}> Ao baixar, instalar, acessar ou usar o aplicativo e os serviços do ZEFIR: Detectando riscos, 
           protegendo vidas,  você concorda em cumprir e estar legalmente vinculado a estes Termos de Uso e à Política de Privacidade. 
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     width:'100%',
     height: 90,
     justifyContent:'flex-start',
-    marginHorizontal: 20,
+   paddingHorizontal: 15,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

@@ -1,13 +1,14 @@
-import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Image, Alert, ActivityIndicator } from 'react-native'
+import { View, ImageBackground, StyleSheet, TouchableOpacity, Text, TextInput, Alert, ActivityIndicator, Modal, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useState } from 'react'
-import { cadastrar } from '../services/auth'
 import { createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../config/firebase'
 //fonte de aplicativo
 import { useFonts } from 'expo-font'
 import { Manrope_400Regular, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold } from '@expo-google-fonts/manrope'
+//icones
+import Feather from '@expo/vector-icons/Feather'
 
 //validação do e-mail
 function emailValido(e) {
@@ -20,6 +21,42 @@ function formatarTelefone(t) {
   if (d.length <= 7) return `(${d.slice(0, 2)}) ${d.slice(2)}`
   return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`
 }
+
+//resumo dos documentos exibidos na caixinha
+const DOCUMENTOS = {
+  termos: {
+    titulo: 'Termos de Uso',
+    icone: 'file-text',
+    intro: 'O ZEFIR detecta riscos como vazamento de gás e fumaça por meio de sensores IoT e do aplicativo, ajudando a proteger vidas.',
+    chamada: 'Ao utilizar o aplicativo, você concorda que:',
+    itens: [
+      'A licença de uso é pessoal, limitada e apenas para monitoramento residencial.',
+      'Não é permitido copiar, modificar, fazer engenharia reversa ou redistribuir o software.',
+      'O ZEFIR é uma ferramenta auxiliar e não substitui a manutenção preventiva dos equipamentos de gás.',
+      'Não nos responsabilizamos por falhas de Wi-Fi ou de energia elétrica na residência.',
+      'Você pode encerrar o uso a qualquer momento excluindo sua conta.',
+    ],
+    outro: 'privacidade',
+    outroTexto: 'Política de Privacidade',
+  },
+  privacidade: {
+    titulo: 'Política de Privacidade',
+    icone: 'shield',
+    intro: 'Tratamos seus dados de acordo com a Lei Geral de Proteção de Dados (LGPD, Lei nº 13.709/2018).',
+    chamada: 'Ao utilizar o aplicativo, você está ciente de que:',
+    itens: [
+      'Coletamos dados cadastrais (nome, e-mail, telefone, CPF e endereço) e dados dos sensores (gás, fumaça, umidade e temperatura).',
+      'Seus dados são protegidos com criptografia (TLS/HTTPS e banco de dados Firebase Firestore).',
+      'Usamos apenas armazenamento local necessário para manter seu login e as últimas leituras. Não há rastreamento publicitário.',
+      'Você pode acessar, corrigir seus dados ou excluir sua conta a qualquer momento.',
+      'Incidentes relevantes de segurança serão comunicados à ANPD e aos titulares afetados.',
+    ],
+    outro: 'termos',
+    outroTexto: 'Termos de Uso',
+  },
+}
+
+const EMAIL_CONTATO = 'irmaosmetralhaetec@gmail.com'
 
 export default function Cadastro() {
 
@@ -37,6 +74,27 @@ export default function Cadastro() {
   const [carregando, setCarregando] = useState(false)
   const navigation = useNavigation()
 
+  //termos e privacidade
+  const [modalAberto, setModalAberto] = useState(null) // null | 'termos' | 'privacidade'
+  const [leu, setLeu] = useState({ termos: false, privacidade: false })
+  const [aceitou, setAceitou] = useState({ termos: false, privacidade: false })
+
+  const podeCadastrar = aceitou.termos && aceitou.privacidade
+
+  //abrir a caixinha conta como "leu"
+  function abrirDocumento(tipo) {
+    setLeu((anterior) => ({ ...anterior, [tipo]: true }))
+    setModalAberto(tipo)
+  }
+
+  //só deixa marcar se já abriu para ler
+  function alternarAceite(tipo) {
+    if (!leu[tipo]) {
+      abrirDocumento(tipo)
+      return
+    }
+    setAceitou((anterior) => ({ ...anterior, [tipo]: !anterior[tipo] }))
+  }
 
   async function realizarCadastro() {
     const emailLimpo = email.trim()
@@ -44,17 +102,14 @@ export default function Cadastro() {
     const telefoneNumeros = telefone.replace(/\D/g, '')
 
     if (!emailLimpo || !telefoneNumeros || !senha || !nomeUsuario) {
-      console.log('FALHOU: campo vazio', { emailLimpo, telefoneNumeros, senha: !!senha, nomeLimpo })
       Alert.alert('Atenção', 'Preencha todos os campos.')
       return
     }
     if (!emailValido(emailLimpo)) {
-      console.log('FALHOU: e-mail inválido', emailLimpo)
       Alert.alert('E-mail inválido', 'Digite um e-mail no formato nome@dominio.com.')
       return
     }
     if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
-      console.log('FALHOU: telefone', telefoneNumeros)
       Alert.alert('Telefone inválido', 'Digite o telefone com DDD.')
       return
     }
@@ -62,20 +117,24 @@ export default function Cadastro() {
       Alert.alert('Senha fraca', 'A senha precisa ter pelo menos 6 caracteres.')
       return
     }
-    console.log('2. validações ok, criando conta...')
+    if (!aceitou.termos || !aceitou.privacidade) {
+      Alert.alert('Atenção', 'Leia e aceite os Termos de Uso e a Política de Privacidade para continuar.')
+      return
+    }
     try {
       setCarregando(true)
 
       const cred = await createUserWithEmailAndPassword(auth, emailLimpo, senha)
-      console.log('3. conta criada:', cred.user.uid)
       await setDoc(doc(db, 'Usuario', cred.user.uid), {
         id_usuario: Date.now(),
         nome: nomeLimpo,
         e_mail: emailLimpo,
         telefone: telefoneNumeros,
+        aceitou_termos: true,
+        aceitou_privacidade: true,
+        aceite_em: serverTimestamp(),
         criado_em: serverTimestamp(),
       })
-      console.log('4. dados salvos')
       await sendEmailVerification(cred.user)
       await signOut(auth)
 
@@ -101,12 +160,11 @@ export default function Cadastro() {
     }
   }
 
-
-
-
   if (!fontsLoaded) {
     return null
   }
+
+  const doc_ = modalAberto ? DOCUMENTOS[modalAberto] : null
 
   return (
     <View style={styles.screen}>
@@ -158,34 +216,40 @@ export default function Cadastro() {
             onChangeText={setSenha}
             secureTextEntry
           />
-          {/* Botão - Logar */}
-          <TouchableOpacity style={styles.bottom} onPress={realizarCadastro} disabled={carregando}>
+
+          {/* Aceite: Termos de Uso e Política de Privacidade */}
+          <View style={styles.boxAceites}>
+            <View style={styles.linhaAceite}>
+              <TouchableOpacity style={styles.checkbox} onPress={() => alternarAceite('termos')}>
+                {aceitou.termos && <Feather name="check" size={18} color="#071739" />}
+              </TouchableOpacity>
+              <Text style={styles.textAceite}>
+                Li e aceito os{' '}
+                <Text style={styles.textLink} onPress={() => abrirDocumento('termos')}>Termos de Uso</Text>
+              </Text>
+            </View>
+            <View style={styles.linhaAceite}>
+              <TouchableOpacity style={styles.checkbox} onPress={() => alternarAceite('privacidade')}>
+                {aceitou.privacidade && <Feather name="check" size={18} color="#071739" />}
+              </TouchableOpacity>
+              <Text style={styles.textAceite}>
+                Li e concordo com a{' '}
+                <Text style={styles.textLink} onPress={() => abrirDocumento('privacidade')}>Política de Privacidade</Text>
+              </Text>
+            </View>
+          </View>
+
+          {/* Botão - Criar */}
+          <TouchableOpacity
+            style={[styles.bottom, !podeCadastrar && styles.bottomDesativado]}
+            onPress={realizarCadastro}
+            disabled={carregando || !podeCadastrar}
+          >
             {carregando
               ? <ActivityIndicator color="white" />
               : <Text style={styles.textBottom}> Criar</Text>}
           </TouchableOpacity>
-          <Text style={styles.textCard1}>ou crie com</Text>
-          <View style={styles.boxAling}>
-            {/* Imagens */}
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/GoogleLogo.png')}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/AppleLogo.png')}
-                style={styles.image}
-              />
-            </View>
-            <View style={styles.boxMoldura}>
-              <Image
-                source={require('../assets/MicrosoftLogo.png')}
-                style={styles.image}
-              />
-            </View>
-          </View>
+
           {/* Botão - Logar 2 */}
           <TouchableOpacity
             onPress={() => navigation.navigate('Login')}
@@ -194,6 +258,47 @@ export default function Cadastro() {
           </TouchableOpacity>
         </View>
       </ImageBackground>
+
+      {/* Caixinha com o resumo */}
+      <Modal
+        visible={modalAberto !== null}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setModalAberto(null)}
+      >
+        <View style={styles.overlay}>
+          {doc_ && (
+            <View style={styles.modalCard}>
+              <TouchableOpacity style={styles.botaoX} onPress={() => setModalAberto(null)}>
+                <Feather name="x" size={26} color="#4B5563" />
+              </TouchableOpacity>
+
+              <View style={styles.circuloIcone}>
+                <Feather name={doc_.icone} size={28} color="#071739" />
+              </View>
+              <Text style={styles.modalTitle}>{doc_.titulo}</Text>
+
+              <ScrollView style={styles.modalScroll} showsVerticalScrollIndicator>
+                <Text style={styles.modalText}>{doc_.intro}</Text>
+                <Text style={[styles.modalText, { marginTop: 14 }]}>{doc_.chamada}</Text>
+                {doc_.itens.map((item) => (
+                  <Text key={item} style={styles.modalText}>{'\u2022 ' + item}</Text>
+                ))}
+                <Text style={[styles.modalText, { marginTop: 14 }]}>
+                  Para mais informações, entre em contato conosco pelo e-mail: {EMAIL_CONTATO}
+                </Text>
+              </ScrollView>
+
+              <TouchableOpacity style={styles.modalBotton} onPress={() => setModalAberto(null)}>
+                <Text style={styles.modalBntText}>Fechar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => abrirDocumento(doc_.outro)}>
+                <Text style={styles.modalLink}>{doc_.outroTexto}</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -243,6 +348,35 @@ const styles = StyleSheet.create({
     width: '90%',
     height: 45
   },
+  //Aceite
+  boxAceites: {
+    width: '90%',
+  },
+  linhaAceite: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+  checkbox: {
+    backgroundColor: 'white',
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  textAceite: {
+    fontFamily: 'Manrope',
+    fontSize: 15,
+    color: 'white',
+    flexShrink: 1,
+  },
+  textLink: {
+    fontFamily: 'ManropeSemiBold',
+    textDecorationLine: 'underline',
+    color: 'white',
+  },
   //Botão
   bottom: {
     backgroundColor: "#071739",
@@ -252,6 +386,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 20
+  },
+  bottomDesativado: {
+    opacity: 0.45,
   },
   textBottom: {
     fontFamily: 'Manrope',
@@ -264,31 +401,73 @@ const styles = StyleSheet.create({
     fontSize: 17,
     color: '#ffff',
   },
-  textCard1: {
-    fontFamily: 'Manrope',
-    fontSize: 17,
-    margin: 10,
-    color: 'white'
+  //Caixinha (modal)
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  //Imagens logins
-  image: {
-    width: 40,
-    height: 40,
-    margin: 10,
-  },
-  boxAling: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '70%'
-  },
-  boxMoldura: {
+  modalCard: {
     backgroundColor: 'white',
-    width: 70,
-    height: 60,
-    borderRadius: 10,
-    padding: 8,
+    width: '100%',
+    maxHeight: '85%',
+    borderRadius: 25,
+    padding: 22,
+    alignItems: 'center',
+  },
+  botaoX: {
+    position: 'absolute',
+    top: 14,
+    right: 16,
+    zIndex: 1,
+  },
+  circuloIcone: {
+    backgroundColor: '#C9D6F5',
+    width: 62,
+    height: 62,
+    borderRadius: 31,
     alignItems: 'center',
     justifyContent: 'center',
-    marginHorizontal: 5,
-  }
+    marginTop: 6,
+  },
+  modalTitle: {
+    fontFamily: 'ManropeBold',
+    fontSize: 22,
+    color: '#0F0F0F',
+    marginVertical: 14,
+  },
+  modalScroll: {
+    width: '100%',
+    flexGrow: 0,
+    marginBottom: 16,
+  },
+  modalText: {
+    fontFamily: 'Manrope',
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#0F0F0F',
+  },
+  modalBotton: {
+    backgroundColor: '#071739',
+    width: '100%',
+    height: 46,
+    borderRadius: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalBntText: {
+    fontFamily: 'ManropeBold',
+    fontSize: 17,
+    color: 'white',
+  },
+  modalLink: {
+    fontFamily: 'Manrope',
+    fontSize: 16,
+    color: '#071739',
+    textDecorationLine: 'underline',
+    marginTop: 14,
+    marginBottom: 4,
+  },
 })

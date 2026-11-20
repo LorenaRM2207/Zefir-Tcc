@@ -1,4 +1,4 @@
-import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { useState, useEffect } from 'react'
 import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore'
@@ -13,14 +13,16 @@ import Feather from '@expo/vector-icons/Feather'
 import AvatarPerfil from '../components/AvatarPerfil'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
 
-const LIMITE_GAS_PPM = 200
+const LIMITE_GAS_PPM = 2100
 const MINUTOS_CONECTADO = 10
 
 export default function Home() {
 
   //Tela sem conexão/sensor conectado
-  const [modoAtivo, setModoAtivo] = useState(true)
   const [leitura, setLeitura] = useState(null)
+  const [carregandoSensor, setCarregandoSensor] = useState(true)
+  const [agora, setAgora] = useState(Date.now())
+  const [avisoConexao, setAvisoConexao] = useState('')
   const navigation = useNavigation()
 
   const [fontsLoaded] = useFonts({
@@ -38,13 +40,22 @@ export default function Home() {
       q,
       (snapshot) => {
         setLeitura(snapshot.docs.length > 0 ? snapshot.docs[0].data() : null)
+        setCarregandoSensor(false)
       },
-      (erro) => console.error('Erro ao ler sensor: ', erro)
+      (erro) => {
+        console.error('Erro ao ler sensor: ', erro)
+        setCarregandoSensor(false)
+      }
     )
     return cancelar
   }, [])
+
+  useEffect(() => {
+    const t = setInterval(() => setAgora(Date.now()), 15000)
+    return () => clearInterval(t)
+  }, [])
   const dataLeitura = leitura?.data_hora?.toDate ? leitura.data_hora.toDate() : null
-  const conectado = !!dataLeitura && (Date.now() - dataLeitura.getTime()) / 60000 <= MINUTOS_CONECTADO
+  const conectado = !!dataLeitura && (agora - dataLeitura.getTime()) / 60000 <= MINUTOS_CONECTADO
   const gasAlto = !!leitura && Number(leitura.ppm_gas) > LIMITE_GAS_PPM
   const horaLeitura = dataLeitura
     ? `${String(dataLeitura.getHours()).padStart(2, '0')}:${String(dataLeitura.getMinutes()).padStart(2, '0')}`
@@ -73,7 +84,9 @@ export default function Home() {
         </View>
 
       </View>
-      {modoAtivo ? (
+      {carregandoSensor ? (
+        <ActivityIndicator size="large" color="#071739" style={{ marginTop: 80 }} />
+      ) : !conectado ? (
         <>
           <ScrollView>
             <View style={styles.logoContainer}>
@@ -83,21 +96,29 @@ export default function Home() {
                   style={styles.image}
                 />
                 <TouchableOpacity
-                  onPress={alternarFuncao}
+                  onPress={() => {
+                    setAvisoConexao('Sensor não encontrado. Ligue-o e confirme que está conectado ao Wi-Fi.')
+                    setTimeout(() => setAvisoConexao(''), 4000)
+                  }}
                   style={styles.boxSensor}
                 >
                   <Text style={styles.textSensor}> Conectar Sensor</Text>
                 </TouchableOpacity>
               </View>
             </View>
+            {!!avisoConexao && (
+              <Text style={[styles.textConfiguration, { color: '#D64545', marginHorizontal: 30 }]}>
+                {avisoConexao}
+              </Text>
+            )}
             {/* Box Sensor Configurações */}
             <View style={styles.container}>
-              <View style={[styles.boxSensor2, { height: 120, justifyContent: 'center' }]}>
-                <Text style={[styles.text2Notification, { fontFamily: 'ManropeBold' }]}>Ainda não possui um sensor? </Text>
-                <Text style={styles.text2Notification}>Compre um novo agora para aproveitar de todas as funcionalidades do nosso aplicativo,.</Text>
+              <View style={[styles.boxConfiguration, { height: 120, justifyContent: 'center' }]}>
+                <Text style={[styles.textConfiguration, { fontFamily: 'ManropeBold' }]}>Ainda não possui um sensor? </Text>
+                <Text style={styles.textConfiguration}>Compre um novo agora para aproveitar de todas as funcionalidades do nosso aplicativo,.</Text>
               </View>
               <Text style={[styles.textNotification, { fontSize: 25, color: '#071739', marginTop: 15 }]}> Zefir </Text>
-              <Text style={[styles.text2Notification, { fontSize: 19 }]}>Detectando riscos, Protegendo vidas</Text>
+              <Text style={[styles.textConfiguration, { fontSize: 19 }]}>Detectando riscos, Protegendo vidas</Text>
               <TouchableOpacity
                 onPress={() => navigation.navigate('TelaBuy')}
                 style={[styles.bottom2, { marginTop: 15 }]}
@@ -136,44 +157,38 @@ export default function Home() {
             </View>
             {/* Box Sensor Configurações */}
             <View style={styles.container}>
-              <View style={styles.boxSensor2}>
+              <View style={styles.boxConfiguration}>
                 <View style={styles.columnsRow}>
-
                   {/* Coluna 1 */}
                   <View style={{ alignItems: 'flex-start' }}>
                     <View style={styles.alignConfigurations}>
-                      <View style={[styles.boxConects4, !conectado && { backgroundColor: '#D64545' }]}>
+                      <View style={[styles.boxConects, !conectado && { backgroundColor: '#D64545' }]}>
                         <Entypo name="link" size={22} color="black" />
                       </View>
-                      <Text style={styles.text2Notification}>{conectado ? ' Conectado' : ' Desconectado'}</Text>
+                      <Text style={styles.textConfiguration}>{conectado ? ' Conectado' : ' Desconectado'}</Text>
                     </View>
-
                     <View style={styles.alignConfigurations}>
-                      <View style={[styles.boxConects4, gasAlto && { backgroundColor: '#D64545' }]}>
+                      <View style={[styles.boxConects, gasAlto && { backgroundColor: '#D64545' }]}>
                         <Feather name="lock" size={22} color="black" />
                       </View>
-                      <Text style={styles.text2Notification}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
+                      <Text style={styles.textConfiguration}>{gasAlto ? ' Alerta' : ' Seguro'}</Text>
                     </View>
-
-
                   </View>
-
                   {/* Coluna 2 */}
                   <View style={{ alignItems: 'flex-start' }}>
                     <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects5}>
+                      <View style={styles.boxConects2}>
                         <Feather name="droplet" size={22} color="black" />
                       </View>
-                      <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
+                      <Text style={styles.textConfiguration}>{leitura ? ` ${Math.round(leitura.umidade)}%` : ' --'}</Text>
                     </View>
                     <View style={styles.alignConfigurations}>
-                      <View style={styles.boxConects5}>
+                      <View style={styles.boxConects2}>
                         <Feather name="wind" size={22} color="black" />
                       </View>
-                      <Text style={styles.text2Notification}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
+                      <Text style={styles.textConfiguration}>{leitura ? ` ${Math.round(leitura.ppm_gas)} ppm` : ' --'}</Text>
                     </View>
                   </View>
-
                 </View>
               </View>
             </View>
@@ -185,7 +200,7 @@ export default function Home() {
                   <Text style={styles.textNotification}> Pedido Feito</Text>
                 </View>
                 <View>
-                  <Text style={styles.text2Notification}>Sua ultima compra foi realizada com sucesso </Text>
+                  <Text style={styles.textConfiguration}>Sua ultima compra foi realizada com sucesso </Text>
                 </View>
                 <TouchableOpacity
                   style={styles.bottom2}
@@ -274,8 +289,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 
-  //Style Box Configurações sensor
-  boxSensor2: {
+
+  //Style box configurações sensor
+  boxConfiguration: {
     backgroundColor: '#D9D9D9',
     width: '85%',
     height: 130,
@@ -283,24 +299,6 @@ const styles = StyleSheet.create({
     margin: 10,
     padding: 10,
     alignItems: 'stretch',
-  },
-  boxConects: {
-    backgroundColor: '#D64545',
-    width: 35,
-    height: 35,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  boxConects3: {
-    backgroundColor: '#A4B5C4',
-    width: '75%',
-    height: 35,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 15,
-    marginTop: 15,
   },
   alignConfigurations: {
     flexDirection: 'row',
@@ -313,8 +311,29 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'flex-start',
   },
-
-
+  boxConects: {
+    backgroundColor: '#71cf77',
+    width: 35,
+    height: 35,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  boxConects2: {
+    backgroundColor: 'rgba(255, 230, 119, 0.96)',
+    width: 35,
+    height: 35,
+    borderRadius: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textConfiguration: {
+    fontFamily: 'Manrope',
+    fontSize: 17,
+    letterSpacing: 1,
+    lineHeight: 20,
+    textAlign: 'center'
+  },
 
 
 
@@ -357,29 +376,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     color: 'white'
   },
-  //Style Box Configurações sensor
-  boxConects4: {
-    backgroundColor: '#71cf77',
-    width: 35,
-    height: 35,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  boxConects5: {
-    backgroundColor: 'rgba(255, 230, 119, 0.96)',
-    width: 35,
-    height: 35,
-    borderRadius: 15,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  textConfiguration: {
-    fontFamily: 'ManropeBold',
-    fontSize: 17,
-    letterSpacing: 1,
-    lineHeight: 20,
-  },
   //Style Box Notification - Umidade do ar
   box2Notification: {
     backgroundColor: 'rgba(82, 130, 189, 0.53)',
@@ -397,14 +393,6 @@ const styles = StyleSheet.create({
     fontSize: 19,
     letterSpacing: 1,
     textAlign: 'center'
-  },
-  text2Notification: {
-    fontFamily: 'Manrope',
-    fontSize: 17,
-    letterSpacing: 1,
-    lineHeight: 20,
-    textAlign: 'center'
-
   },
   text3Notification: {
     fontFamily: 'Manrope',
