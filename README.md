@@ -5,7 +5,7 @@ Buscamos proteger vidas e patrimônios através do monitoramento em tempo real d
 
 Utlizamos para a programação do app o visual studio code, programando em JavaScript, e para o sensor utilizamos a plataforma Arduino IDE, com a linguagem C++. 
 
-O aplicativo pode ser acessado através do anexo na atividade ou baixando a pasta zip, extraindo o conteudo e utilizando do app. 
+O aplicativo pode ser acessado através do QrCode na atividade ou baixando a pasta zip, extraindo o conteudo e utilizando do app. 
 Observação: Algumas funcionalidades só podem ser executadas com o sensor junto ao aplicativo.
 
 Integrantes: Aurora Santos Gonçalvez, Letícia Anti De Freitas Andrade, Lorena Rodrigues Marinho, Marina Yumi Shinomiya Bruegnoli e Maycon Ryan Fontinele De Araújo
